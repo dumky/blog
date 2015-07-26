@@ -1,2 +1,2 @@
-# blog
-Content for Julien Couvreur's [blog](http://blog.monstuff.com)
+# Curiosity is Bliss
+Julien Couvreur's [blog](http://blog.monstuff.com)

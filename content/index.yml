@@ -1,0 +1,9 @@
+---
+blog-title: Curiosity is Bliss
+blog-author: Julien Couvreur
+blog-url: http://blog.monstuff.com
+entries:
+  - title: Hello world
+    date: 2015-07-26 
+    src: test.md
+...

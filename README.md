@@ -1,2 +1,2 @@
 # blog
-Content for Julien's [blog[(blog.monstuff.com)
+Content for Julien's [blog](blog.monstuff.com)

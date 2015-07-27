@@ -4,8 +4,8 @@ What tool to use? I don't like setup and I don't like administering SQL instance
 
 There are a few [flat-file blogging platforms](http://www.freshtechtips.com/2014/01/flat-file-blogging-software.html), but none quite fit the bill.
 
-The solution I built yesterday is simple: put content in Markdown files, put some metadata about the entry in a YAML file, generate the blog files from that and simple Liquid templates.
+The solution I built yesterday is simple (every new tool starts that way doesn't it): put content in Markdown files, put some metadata about the entry in a YAML file, generate the blog files from that and simple Liquid templates.
 
-The code becomes really simple by leveraging libraries like MarkdownDeep, YamlDotNet, and DotLiquid. I also intend to refresh my templates and stylesheets, although that will be more work for later.
+The code (not counting HTML templates or CSS) stays short by leveraging libraries like MarkdownDeep, YamlDotNet, and DotLiquid. I intend to refresh the design and stylesheets which are dating, but that will come later.
 
 The code for the tool and content for this blog are hosted on this [GitHub repo](https://github.com/dumky/blog).

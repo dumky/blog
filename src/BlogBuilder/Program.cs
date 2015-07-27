@@ -47,9 +47,9 @@ namespace BlogBuilder
 
             var index = LoadIndex();
 
-            index.OutputEntries();
-            index.OutputFrontPage();
-            index.OutputRSS();
+            OutputEntries(index);
+            OutputFrontPage(index);
+            OutputRSS(index);
         }
 
         private static Index LoadIndex()
@@ -60,6 +60,38 @@ namespace BlogBuilder
 
             var index = deserializer.Deserialize<Index>(input);
             return index;
+        }
+
+        private static void OutputEntries(Index index)
+        {
+            Template template = Template.Parse(Program.EntryTemplate);
+
+            foreach (var entry in index.Entries)
+            {
+                var output = template.Render(Hash.FromAnonymousObject(new { entry = entry, index = index }));
+
+                EnsureDirectoryExists(entry.OutputFullPath);
+                File.WriteAllText(entry.OutputFullPath, output);
+            }
+        }
+
+        private static void OutputFrontPage(Index index)
+        {
+            Template template = Template.Parse(Program.FrontPageTemplate);
+            var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
+            File.WriteAllText(index.FrontPageFullPath, output);
+        }
+
+        private static void OutputRSS(Index index)
+        {
+            Template template = Template.Parse(Program.RSSTemplate);
+            var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
+            File.WriteAllText(index.RSSFullPath, output);
+        }
+
+        private static void EnsureDirectoryExists(string path)
+        {
+            new System.IO.FileInfo(path).Directory.Create();
         }
     }
 
@@ -80,33 +112,11 @@ namespace BlogBuilder
         [YamlMember(Alias = "blog-description")]
         public string BlogDescription { get; set; }
 
-        // TODO: sort entries when set
         private List<Entry> entries;
         public List<Entry> Entries
         {
             get { return entries; }
             set { entries = value.OrderByDescending(o => o.Date).ToList(); }
-        }
-
-        public void OutputEntries()
-        {
-            Template template = Template.Parse(Program.EntryTemplate);
-
-            foreach (var entry in Entries)
-            {
-                // TODO: check if content is newer and output should be deleted
-                var output = template.Render(Hash.FromAnonymousObject(new { current = entry, index = this }));
-
-                EnsureDirectoryExists(entry.OutputFullPath);
-                File.WriteAllText(entry.OutputFullPath, output);
-            }
-        }
-
-        public void OutputFrontPage()
-        {
-            Template template = Template.Parse(Program.FrontPageTemplate);
-            var output = template.Render(Hash.FromAnonymousObject(new { index = this }));
-            File.WriteAllText(FrontPageFullPath, output);
         }
 
         public string FrontPageFullPath
@@ -117,24 +127,12 @@ namespace BlogBuilder
             }
         }
 
-        public void OutputRSS()
-        {
-            Template template = Template.Parse(Program.RSSTemplate);
-            var output = template.Render(Hash.FromAnonymousObject(new { index = this }));
-            File.WriteAllText(RSSFullPath, output);
-        }
-
         public string RSSFullPath
         {
             get
             {
                 return Path.Combine(Program.outputRoot, "index.rss");
             }
-        }
-
-        public void EnsureDirectoryExists(string path)
-        {
-            new System.IO.FileInfo(path).Directory.Create();
         }
     }
 

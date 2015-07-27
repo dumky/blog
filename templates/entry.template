@@ -1,2 +1,7 @@
-hi {{current.Title}}
-{{current.Html}}
+
+
+  <title>{{entry.Title | Escape}}</title>
+  <link>{{index.BlogUrl}}{{entry.WebRelativePath}}</link>
+  <description><![CDATA[{{entry.Html}}]]></description>
+  <guid isPermaLink="true">{{index.BlogUrl}}{{entry.WebRelativePath}}</guid>
+  <pubDate>{{entry.Date}}</pubDate>

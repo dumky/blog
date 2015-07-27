@@ -7,6 +7,7 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 // TODO: fix date formats in RSS
+// TODO: figure out what to do with static files for the blog (CSS, JS, etc)
 
 namespace BlogBuilder
 {
@@ -39,6 +40,13 @@ namespace BlogBuilder
                 return File.ReadAllText(Path.Combine(templateRoot, "rss.template"));
             }
         }
+        public static string ArchivesTemplate
+        {
+            get
+            {
+                return File.ReadAllText(Path.Combine(templateRoot, "archives.template"));
+            }
+        }
 
         static void Main(string[] args)
         {
@@ -50,6 +58,7 @@ namespace BlogBuilder
             OutputEntries(index);
             OutputFrontPage(index);
             OutputRSS(index);
+            OutputArchives(index);
         }
 
         private static Index LoadIndex()
@@ -87,6 +96,13 @@ namespace BlogBuilder
             Template template = Template.Parse(Program.RSSTemplate);
             var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
             File.WriteAllText(index.RSSFullPath, output);
+        }
+
+        private static void OutputArchives(Index index)
+        {
+            Template template = Template.Parse(Program.ArchivesTemplate);
+            var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
+            File.WriteAllText(index.ArchivesFullPath, output);
         }
 
         private static void EnsureDirectoryExists(string path)
@@ -132,6 +148,14 @@ namespace BlogBuilder
             get
             {
                 return Path.Combine(Program.outputRoot, "index.rss");
+            }
+        }
+
+        public string ArchivesFullPath
+        {
+            get
+            {
+                return Path.Combine(Program.outputRoot, "archives.html");
             }
         }
     }

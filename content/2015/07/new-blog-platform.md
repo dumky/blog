@@ -1,6 +1,6 @@
 I came back from vacation with the intent to blog more regularly (in particular, I will start a series on the fundamentals of computing). Being an efficient procrastinator, I decided this would involve moving away from MovableType first ;-)
 
-What tool to use? I don't like set up or administering SQL instances. I appreciate static files (easier to backup and migrate to new hosts) and the idea of managing my content in git/GitHub (versioning, access control, Markdown preview). There are a few [flat-file blogging platforms](http://www.freshtechtips.com/2014/01/flat-file-blogging-software.html), but none quite fit the bill.
+What tool to use? I don't like set up or administering SQL instances. I appreciate static files (easier to backup and migrate to new hosts) and the idea of managing my content in git/GitHub (versioning, access control, Markdown preview). Also, I need to keep continuity with my previous content. I looked at a few [flat-file blogging platforms](http://www.freshtechtips.com/2014/01/flat-file-blogging-software.html), but none quite fit the bill.
 
 The solution I built yesterday is simple (every tool starts that way, doesn't it): put content in Markdown files, put some metadata about the entry in a YAML file, and generate the HTML and RSS files from that and Liquid templates. The editing can be done directly in GitHub. The publishing is done via FTP.
 

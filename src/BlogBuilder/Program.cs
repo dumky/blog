@@ -8,15 +8,16 @@ using YamlDotNet.Serialization.NamingConventions;
 
 // TODO: fix date formats in RSS
 // TODO: figure out what to do with static files for the blog (CSS, JS, etc)
+// TODO: improve the CSS files
 
 namespace BlogBuilder
 {
     class Program
     {
-        public static string contentRoot = @"C:\Users\Julien\Documents\GitHubVisualStudio\blog\content\";
-        public static string templateRoot = @"C:\Users\Julien\Documents\GitHubVisualStudio\blog\templates\";
-        public static string staticRoot = @"C:\Users\Julien\Documents\GitHubVisualStudio\blog\static\";
-        public static string outputRoot = @"C:\Users\Julien\Documents\GitHubVisualStudio\blog\output\";
+        public static string contentRoot = @"content\";
+        public static string templateRoot = @"templates\";
+        public static string staticRoot = @"static\";
+        public static string outputRoot = @"output\";
 
         public static string FrontPageTemplate
         {
@@ -48,11 +49,20 @@ namespace BlogBuilder
             }
         }
 
+        /// <summary>
+        /// Usage: run this program in the root folder, where it can find the 'content', 'templates' 
+        ///     and 'output' folders.
+        /// </summary>
         static void Main(string[] args)
         {
             Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
             Liquid.UseRubyDateFormat = true;
 
+            GenerateOutputs();
+        }
+
+        private static void GenerateOutputs()
+        {
             var index = LoadIndex();
 
             OutputEntries(index);
@@ -63,8 +73,7 @@ namespace BlogBuilder
 
         private static Index LoadIndex()
         {
-            var input = new StringReader(File.ReadAllText(@"C:\Users\Julien\Documents\GitHubVisualStudio\blog\content\index.yml"));
-
+            var input = new StreamReader(Path.Combine(Program.contentRoot, "index.yml"));
             var deserializer = new Deserializer(namingConvention: new CamelCaseNamingConvention());
 
             var index = deserializer.Deserialize<Index>(input);
@@ -84,25 +93,26 @@ namespace BlogBuilder
             }
         }
 
+        private static void OutputGeneric(Index index, string templatePath, string outputPath)
+        {
+            Template template = Template.Parse(templatePath);
+            var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
+            File.WriteAllText(outputPath, output);
+        }
+
         private static void OutputFrontPage(Index index)
         {
-            Template template = Template.Parse(Program.FrontPageTemplate);
-            var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
-            File.WriteAllText(index.FrontPageFullPath, output);
+            OutputGeneric(index, FrontPageTemplate, index.FrontPageFullPath);
         }
 
         private static void OutputRSS(Index index)
         {
-            Template template = Template.Parse(Program.RSSTemplate);
-            var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
-            File.WriteAllText(index.RSSFullPath, output);
+            OutputGeneric(index, RSSTemplate, index.RSSFullPath);
         }
 
         private static void OutputArchives(Index index)
         {
-            Template template = Template.Parse(Program.ArchivesTemplate);
-            var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
-            File.WriteAllText(index.ArchivesFullPath, output);
+            OutputGeneric(index, ArchivesTemplate, index.ArchivesFullPath);
         }
 
         private static void EnsureDirectoryExists(string path)
@@ -179,22 +189,16 @@ namespace BlogBuilder
             }
         }
 
-        public string MD
-        {
-            get
-            {
-                return File.ReadAllText(SourceFullPath);
-            }
-        }
-
         public string Html
         {
             get
             {
+                var mdContent = File.ReadAllText(SourceFullPath);
+
                 var md = new MarkdownDeep.Markdown();
                 md.ExtraMode = false;
                 md.SafeMode = false;
-                string output = md.Transform(MD);
+                string output = md.Transform(mdContent);
                 return output;
             }
         }

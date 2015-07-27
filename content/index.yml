@@ -1,9 +1,17 @@
 ---
+# no tabs allowed
+
 blog-title: Curiosity is Bliss
 blog-author: Julien Couvreur
+blog-contact: julien.couvreur@gmail.com
 blog-url: http://blog.monstuff.com
+blog-description: Julien Couvreur's programming blog and more
+
 entries:
-  - title: Hello world
+  - title: Hello world <&> hello
     date: 2015-07-26 
     src: test.md
+  - title: New
+    date: 2015-07-26
+    src: 2015/07/new.md
 ...

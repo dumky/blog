@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+
+// TODO: fix date formats in RSS
 
 namespace BlogBuilder
 {
@@ -43,6 +43,7 @@ namespace BlogBuilder
         static void Main(string[] args)
         {
             Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
+            Liquid.UseRubyDateFormat = true;
 
             var index = LoadIndex();
 
@@ -80,9 +81,11 @@ namespace BlogBuilder
         public string BlogDescription { get; set; }
 
         // TODO: sort entries when set
+        private List<Entry> entries;
         public List<Entry> Entries
         {
-            get; set;
+            get { return entries; }
+            set { entries = value.OrderByDescending(o => o.Date).ToList(); }
         }
 
         public void OutputEntries()
@@ -178,7 +181,7 @@ namespace BlogBuilder
         {
             get
             {
-                return Path.Combine(@"archive\", Source).Replace(".md", ".html");
+                return Path.Combine(@"\archives\", Source).Replace(".md", ".html").Replace(@"\", @"/");
             }
         }
 
@@ -186,7 +189,7 @@ namespace BlogBuilder
         {
             get
             {
-                return Path.Combine(Program.outputRoot, @"archive\", Source).Replace(".md", ".html");
+                return Path.Combine(Program.outputRoot, @"archives\", Source).Replace(".md", ".html");
             }
         }
 

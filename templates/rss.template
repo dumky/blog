@@ -11,21 +11,19 @@
 <title>{{index.BlogTitle}}</title>
 <link>{{index.BlogUrl}}</link>
 <description>{{index.BlogDescription | Escape}}</description>
-<dc:language>en-us</dc:language>
-<dc:creator>{{index.BlogContact}}</dc:creator>
-<dc:date>2015-07-25T14:12:23-08:00</dc:date>
-<sy:updatePeriod>daily</sy:updatePeriod>
-<sy:updateFrequency>1</sy:updateFrequency>
-<sy:updateBase>2000-01-01T12:00+00:00</sy:updateBase>
+<language>en-us</language>
+<lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+<pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+<managingEditor>{{index.BlogContact}}</managingEditor>
 
 
-{% for entry in index.Entries -%}
+{% for entry in index.Entries limit:5 -%}
 <item>
-<title>{{entry.Title | Escape}}</title>
-<link></link>
-<description><![CDATA[{{entry.Html}}]]></description>
-<guid isPermaLink="false">383@http://blog.monstuff.com/</guid>
-<dc:date>2015-07-25T14:12:23-08:00</dc:date>
+  <title>{{entry.Title | Escape}}</title>
+  <link>{{index.BlogUrl}}{{entry.WebRelativePath}}</link>
+  <description><![CDATA[{{entry.Html}}]]></description>
+  <guid isPermaLink="true">{{index.BlogUrl}}{{entry.WebRelativePath}}</guid>
+  <pubDate>{{entry.Date}}</pubDate>
 </item>
 {% endfor -%}
 

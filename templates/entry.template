@@ -1,7 +1,58 @@
 
 
-  <title>{{entry.Title | Escape}}</title>
-  <link>{{index.BlogUrl}}{{entry.WebRelativePath}}</link>
-  <description><![CDATA[{{entry.Html}}]]></description>
-  <guid isPermaLink="true">{{index.BlogUrl}}{{entry.WebRelativePath}}</guid>
-  <pubDate>{{entry.Date}}</pubDate>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <title>Curiosity is bliss: {{entry.Title | Escape}}</title>
+  <link rel="stylesheet" href="{{index.BlogUrl}}/styles-site.css" type="text/css" />
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="{{index.BlogUrl}}/index.rdf" />
+</head>
+
+<body>
+
+<div id="banner">
+  <h1><a href="{{index.BlogUrl}}" accesskey="1">{{index.BlogTitle | Escape}}</a></h1>
+  <span class="description">{{index.BlogDescription | Escape}}</span>
+</div>
+
+<div id="container">
+<div class="blog">
+
+<div class="blogbody">
+  <h2 class="title">{{entry.Title | Escape}}</h2>
+
+  {{entry.Html}}
+
+  <span class="posted">Posted by Julien on July 25, 2015. <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}" rel="bookmark">Permalink</a>
+  <br /></span>
+</div>
+
+
+
+<div class="comments-head"><a name="comments"></a>Comments</div>
+
+<div class="comments-body">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        var disqus_shortname = 'curiosityisbliss'; 
+        var disqus_identifier = '383';
+        var disqus_url = '{{index.BlogUrl}}{{entry.WebRelativePath}}';
+
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>    
+
+
+</div>
+</div>
+
+</body>
+</html>

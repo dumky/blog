@@ -4,6 +4,6 @@ What tool to use? I don't like set up or administering SQL instances. I apprecia
 
 The solution I built yesterday is simple (every tool starts that way, doesn't it): put content in Markdown files, put some metadata about the entry in a YAML file, and generate the HTML and RSS files from that and Liquid templates. The editing can be done directly in GitHub. The publishing is done via FTP.
 
-The code (not counting HTML templates or CSS) stays short by leveraging libraries like MarkdownDeep, YamlDotNet, and DotLiquid. Dynamic functionality such as commenting and searching is outsourced to Disqus and Google respectively. I intend to refresh the design and stylesheets which are dating, but that will come later. 
+The code (not counting HTML templates or CSS) stays short by leveraging libraries like MarkdownDeep, YamlDotNet, DotLiquid and System.Net.FtpClient. Dynamic site functionality such as commenting and searching is outsourced, to Disqus and Google respectively. I intend to refresh the design and stylesheets for the site, as they are dating, but that will come later. 
 
 The code for the tool and content for this blog are hosted on this [GitHub repo](https://github.com/dumky/blog).

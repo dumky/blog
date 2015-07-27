@@ -14,41 +14,6 @@ namespace BlogBuilder
 {
     class Program
     {
-        public static string contentRoot = @"content\";
-        public static string templateRoot = @"templates\";
-        public static string staticRoot = @"static\";
-        public static string outputRoot = @"output\";
-
-        public static string FrontPageTemplate
-        {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "index.template"));
-            }
-        }
-        public static string EntryTemplate
-        {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "entry.template"));
-            }
-        }
-
-        public static string RSSTemplate
-        {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "rss.template"));
-            }
-        }
-        public static string ArchivesTemplate
-        {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "archives.template"));
-            }
-        }
-
         /// <summary>
         /// Usage: run this program in the root folder, where it can find the 'content', 'templates' 
         ///     and 'output' folders.
@@ -73,7 +38,7 @@ namespace BlogBuilder
 
         private static Index LoadIndex()
         {
-            var input = new StreamReader(Path.Combine(Program.contentRoot, "index.yml"));
+            var input = new StreamReader(Path.Combine(Globals.contentRoot, "index.yml"));
             var deserializer = new Deserializer(namingConvention: new CamelCaseNamingConvention());
 
             var index = deserializer.Deserialize<Index>(input);
@@ -82,7 +47,7 @@ namespace BlogBuilder
 
         private static void OutputEntries(Index index)
         {
-            Template template = Template.Parse(Program.EntryTemplate);
+            Template template = Template.Parse(Globals.EntryTemplate);
 
             foreach (var entry in index.Entries)
             {
@@ -102,17 +67,17 @@ namespace BlogBuilder
 
         private static void OutputFrontPage(Index index)
         {
-            OutputGeneric(index, FrontPageTemplate, index.FrontPageFullPath);
+            OutputGeneric(index, Globals.FrontPageTemplate, index.FrontPageFullPath);
         }
 
         private static void OutputRSS(Index index)
         {
-            OutputGeneric(index, RSSTemplate, index.RSSFullPath);
+            OutputGeneric(index, Globals.RSSTemplate, index.RSSFullPath);
         }
 
         private static void OutputArchives(Index index)
         {
-            OutputGeneric(index, ArchivesTemplate, index.ArchivesFullPath);
+            OutputGeneric(index, Globals.ArchivesTemplate, index.ArchivesFullPath);
         }
 
         private static void EnsureDirectoryExists(string path)
@@ -149,7 +114,7 @@ namespace BlogBuilder
         {
             get
             {
-                return Path.Combine(Program.outputRoot, "index.html");
+                return Path.Combine(Globals.outputRoot, "index.html");
             }
         }
 
@@ -157,7 +122,7 @@ namespace BlogBuilder
         {
             get
             {
-                return Path.Combine(Program.outputRoot, "index.rss");
+                return Path.Combine(Globals.outputRoot, "index.rss");
             }
         }
 
@@ -165,7 +130,7 @@ namespace BlogBuilder
         {
             get
             {
-                return Path.Combine(Program.outputRoot, "archives.html");
+                return Path.Combine(Globals.outputRoot, "archives.html");
             }
         }
     }
@@ -185,7 +150,7 @@ namespace BlogBuilder
         {
             get
             {
-                return Path.Combine(Program.contentRoot, Source);
+                return Path.Combine(Globals.contentRoot, Source);
             }
         }
 
@@ -215,9 +180,46 @@ namespace BlogBuilder
         {
             get
             {
-                return Path.Combine(Program.outputRoot, @"archives\", Source).Replace(".md", ".html");
+                return Path.Combine(Globals.outputRoot, @"archives\", Source).Replace(".md", ".html");
+            }
+        }
+    }
+
+    public class Globals
+    {
+        public static string contentRoot = @"content\";
+        public static string templateRoot = @"templates\";
+        public static string staticRoot = @"static\";
+        public static string outputRoot = @"output\";
+
+        public static string FrontPageTemplate
+        {
+            get
+            {
+                return File.ReadAllText(Path.Combine(templateRoot, "index.template"));
+            }
+        }
+        public static string EntryTemplate
+        {
+            get
+            {
+                return File.ReadAllText(Path.Combine(templateRoot, "entry.template"));
             }
         }
 
+        public static string RSSTemplate
+        {
+            get
+            {
+                return File.ReadAllText(Path.Combine(templateRoot, "rss.template"));
+            }
+        }
+        public static string ArchivesTemplate
+        {
+            get
+            {
+                return File.ReadAllText(Path.Combine(templateRoot, "archives.template"));
+            }
+        }
     }
 }

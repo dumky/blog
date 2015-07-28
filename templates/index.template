@@ -28,7 +28,7 @@
     <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}"><h2 class="title">{{entry.Title | Escape}}</h2></a>
 {{entry.Html}}
 	<div class="posted"><a href="{{index.BlogUrl}}{{entry.WebRelativePath}}">Permalink</a>
-		| <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}#disqus_thread" data-disqus-identifier="TODO">Comments (0)</a>
+		| <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}#disqus_thread" data-disqus-identifier="{{entry.WebRelativePath}}">Comments (0)</a>
         | {{entry.Date}}
 	</div>
 	</div>

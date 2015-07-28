@@ -6,9 +6,11 @@ using System.Linq;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-// TODO: fix date formats in RSS
+// TODO: fix date formats
 // TODO: figure out what to do with static files for the blog (CSS, JS, etc)
 // TODO: improve the CSS files
+// TODO: implement search
+
 
 namespace BlogBuilder
 {

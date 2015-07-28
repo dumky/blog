@@ -33,7 +33,7 @@
     <div id="disqus_thread"></div>
     <script type="text/javascript">
         var disqus_shortname = 'curiosityisbliss'; 
-        var disqus_identifier = '383';
+        var disqus_identifier = '{{entry.WebRelativePath}}';
         var disqus_url = '{{index.BlogUrl}}{{entry.WebRelativePath}}';
 
         (function() {

@@ -6,6 +6,7 @@ using System.Linq;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
+// TODO: solve how to publish the content incrementally (FTP?) 
 // TODO: fix date formats in RSS
 // TODO: figure out what to do with static files for the blog (CSS, JS, etc)
 // TODO: improve the CSS files
@@ -24,6 +25,12 @@ namespace BlogBuilder
             Liquid.UseRubyDateFormat = true;
 
             GenerateOutputs();
+            Upload();
+        }
+
+        private static void Upload()
+        {
+            
         }
 
         private static void GenerateOutputs()
@@ -122,7 +129,7 @@ namespace BlogBuilder
         {
             get
             {
-                return Path.Combine(Globals.outputRoot, "index.rss");
+                return Path.Combine(Globals.outputRoot, "index.xml");
             }
         }
 

@@ -28,7 +28,7 @@
     <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}"><h2 class="title">{{entry.Title | Escape}}</h2></a>
 {{entry.Html}}
 	<div class="posted"><a href="{{index.BlogUrl}}{{entry.WebRelativePath}}">Permalink</a>
-		| <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}#disqus_thread" data-disqus-identifier="TODO">Comments (0)</a>
+		| <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}#disqus_thread" data-disqus-identifier="{{entry.WebRelativePath}}">Comments (0)</a>
         | {{entry.Date}}
 	</div>
 	</div>
@@ -67,11 +67,11 @@
 </div>
 
 <div class="side">
-  <a href="/archives.html">All entries ({{index.Entries | Size | Plus: 10 }})</a><br />
+  <a href="{{index.BlogUrl}}/archives.html">All entries ({{index.Entries | Size | Plus: 10 }})</a><br />
 <br />
 
 
-<a href="http://blog.monstuff.com/archives/000383.html">Physics experiments to do at home</a><br />
+<a href="{{index.BlogUrl}}/archives/000383.html">Physics experiments to do at home</a><br />
   ... TODO list of recent entries ...
 </div>
 

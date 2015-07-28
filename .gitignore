@@ -21,8 +21,10 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
-[Oo]utput/*
-![Oo]utput/README.md
+[Oo]utput/**.html
+[Oo]utput/**.xml
+[Oo]utput/**.rss
+
 
 
 # Visual Studio 2015 cache/options directory

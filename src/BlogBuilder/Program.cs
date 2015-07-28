@@ -3,17 +3,22 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.FtpClient;
+using System.Net.FtpClient.Async;
+using System.Security;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-// TODO: solve how to publish the content incrementally (FTP?) 
-// TODO: fix date formats in RSS
+// TODO: fix date formats
 // TODO: figure out what to do with static files for the blog (CSS, JS, etc)
 // TODO: improve the CSS files
+// TODO: implement search
+
 
 namespace BlogBuilder
 {
-    class Program
+    class BlogBuilder
     {
         /// <summary>
         /// Usage: run this program in the root folder, where it can find the 'content', 'templates' 
@@ -24,16 +29,48 @@ namespace BlogBuilder
             Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
             Liquid.UseRubyDateFormat = true;
 
-            GenerateOutputs();
-            Upload();
+            var blogBuilder = new BlogBuilder();
+            var index = blogBuilder.GenerateOutputs();
+            blogBuilder.PublishOutputs(index);
         }
 
-        private static void Upload()
+        private async void PublishOutputs(Index index)
         {
-            
+            FtpClient conn = await ConnectFtp(index);
+
+            var localFolders = ListSubDirectories(Globals.outputRoot).ToArray();
+            foreach (var localFolder in localFolders)
+            {
+                FtpListItem[] fileList = await conn.GetListingAsync(Path.Combine(index.FtpDir, localFolder));
+
+                foreach (var file in fileList)
+                {
+                    //file.Modified
+                    //file.Name
+                    //file.Size
+                }
+            }
+
+
+            // List local and remote folders and compare
+            // Upload changed/new files
+
         }
 
-        private static void GenerateOutputs()
+        private async System.Threading.Tasks.Task<FtpClient> ConnectFtp(Index index)
+        {
+            FtpClient conn = new FtpClient();
+
+            conn.Host = index.FtpHost;
+            Console.WriteLine("Password for user {0} on ftp host {1}", index.FtpUser, index.FtpHost);
+            var password = getPassword();
+            conn.Credentials = new NetworkCredential(index.FtpUser, password);
+
+            await conn.ConnectAsync();
+            return conn;
+        }
+
+        private Index GenerateOutputs()
         {
             var index = LoadIndex();
 
@@ -41,9 +78,11 @@ namespace BlogBuilder
             OutputFrontPage(index);
             OutputRSS(index);
             OutputArchives(index);
+
+            return index;
         }
 
-        private static Index LoadIndex()
+        private Index LoadIndex()
         {
             var input = new StreamReader(Path.Combine(Globals.contentRoot, "index.yml"));
             var deserializer = new Deserializer(namingConvention: new CamelCaseNamingConvention());
@@ -52,7 +91,7 @@ namespace BlogBuilder
             return index;
         }
 
-        private static void OutputEntries(Index index)
+        private void OutputEntries(Index index)
         {
             Template template = Template.Parse(Globals.EntryTemplate);
 
@@ -65,32 +104,73 @@ namespace BlogBuilder
             }
         }
 
-        private static void OutputGeneric(Index index, string templatePath, string outputPath)
+        private void OutputGeneric(Index index, string templatePath, string outputPath)
         {
             Template template = Template.Parse(templatePath);
             var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
             File.WriteAllText(outputPath, output);
         }
 
-        private static void OutputFrontPage(Index index)
+        private void OutputFrontPage(Index index)
         {
             OutputGeneric(index, Globals.FrontPageTemplate, index.FrontPageFullPath);
         }
 
-        private static void OutputRSS(Index index)
+        private void OutputRSS(Index index)
         {
             OutputGeneric(index, Globals.RSSTemplate, index.RSSFullPath);
         }
 
-        private static void OutputArchives(Index index)
+        private void OutputArchives(Index index)
         {
             OutputGeneric(index, Globals.ArchivesTemplate, index.ArchivesFullPath);
         }
 
-        private static void EnsureDirectoryExists(string path)
+        private void EnsureDirectoryExists(string path)
         {
             new System.IO.FileInfo(path).Directory.Create();
         }
+
+        public SecureString getPassword()
+        {
+            SecureString pwd = new SecureString();
+            while (true)
+            {
+                ConsoleKeyInfo i = Console.ReadKey(true);
+                if (i.Key == ConsoleKey.Enter)
+                {
+                    break;
+                }
+                else if (i.Key == ConsoleKey.Backspace)
+                {
+                    if (pwd.Length > 0)
+                    {
+                        pwd.RemoveAt(pwd.Length - 1);
+                        Console.Write("\b \b");
+                    }
+                }
+                else
+                {
+                    pwd.AppendChar(i.KeyChar);
+                    Console.Write("*");
+                }
+            }
+            return pwd;
+        }
+
+        public IEnumerable<string> ListSubDirectories(string path)
+        {
+            foreach (var folder in Directory.EnumerateDirectories(path))
+            {
+                yield return folder;
+
+                foreach (var subFolder in ListSubDirectories(folder))
+                {
+                    yield return subFolder;
+                }
+            }
+        }
+        
     }
 
     public class Index : Drop
@@ -109,6 +189,15 @@ namespace BlogBuilder
 
         [YamlMember(Alias = "blog-description")]
         public string BlogDescription { get; set; }
+
+        [YamlMember(Alias = "ftp-host")]
+        public string FtpHost { get; set; }
+
+        [YamlMember(Alias = "ftp-user")]
+        public string FtpUser { get; set; }
+
+        [YamlMember(Alias = "ftp-dir")]
+        public string FtpDir { get; set; }
 
         private List<Entry> entries;
         public List<Entry> Entries
@@ -129,7 +218,7 @@ namespace BlogBuilder
         {
             get
             {
-                return Path.Combine(Globals.outputRoot, "index.xml");
+                return Path.Combine(Globals.outputRoot, "index.rss");
             }
         }
 

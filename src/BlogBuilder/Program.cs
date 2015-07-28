@@ -3,6 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.FtpClient;
+using System.Net.FtpClient.Async;
+using System.Security;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -25,10 +29,41 @@ namespace BlogBuilder
             Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
             Liquid.UseRubyDateFormat = true;
 
-            GenerateOutputs();
+            var index = GenerateOutputs();
+            PublishOutputs(index);
         }
 
-        private static void GenerateOutputs()
+        private static async void PublishOutputs(Index index)
+        {
+            FtpClient conn = await ConnectFtp(index);
+
+            var fileList = await conn.GetListingAsync(index.FtpDir);
+            foreach (var file in fileList)
+            {
+                //file.Modified
+                //file.Name
+                //file.Size
+            }
+
+            // List local and remote folders and compare
+            // Upload changed/new files
+
+        }
+
+        private static async System.Threading.Tasks.Task<FtpClient> ConnectFtp(Index index)
+        {
+            FtpClient conn = new FtpClient();
+
+            conn.Host = index.FtpHost;
+            Console.WriteLine("Password for user {0} on ftp host {1}", index.FtpUser, index.FtpHost);
+            var password = getPassword();
+            conn.Credentials = new NetworkCredential(index.FtpUser, password);
+
+            await conn.ConnectAsync();
+            return conn;
+        }
+
+        private static Index GenerateOutputs()
         {
             var index = LoadIndex();
 
@@ -36,6 +71,8 @@ namespace BlogBuilder
             OutputFrontPage(index);
             OutputRSS(index);
             OutputArchives(index);
+
+            return index;
         }
 
         private static Index LoadIndex()
@@ -86,6 +123,33 @@ namespace BlogBuilder
         {
             new System.IO.FileInfo(path).Directory.Create();
         }
+
+        public static SecureString getPassword()
+        {
+            SecureString pwd = new SecureString();
+            while (true)
+            {
+                ConsoleKeyInfo i = Console.ReadKey(true);
+                if (i.Key == ConsoleKey.Enter)
+                {
+                    break;
+                }
+                else if (i.Key == ConsoleKey.Backspace)
+                {
+                    if (pwd.Length > 0)
+                    {
+                        pwd.RemoveAt(pwd.Length - 1);
+                        Console.Write("\b \b");
+                    }
+                }
+                else
+                {
+                    pwd.AppendChar(i.KeyChar);
+                    Console.Write("*");
+                }
+            }
+            return pwd;
+        }
     }
 
     public class Index : Drop
@@ -104,6 +168,15 @@ namespace BlogBuilder
 
         [YamlMember(Alias = "blog-description")]
         public string BlogDescription { get; set; }
+
+        [YamlMember(Alias = "ftp-host")]
+        public string FtpHost { get; set; }
+
+        [YamlMember(Alias = "ftp-user")]
+        public string FtpUser { get; set; }
+
+        [YamlMember(Alias = "ftp-dir")]
+        public string FtpDir { get; set; }
 
         private List<Entry> entries;
         public List<Entry> Entries

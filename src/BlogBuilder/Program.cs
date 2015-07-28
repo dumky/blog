@@ -18,7 +18,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace BlogBuilder
 {
-    class Program
+    class BlogBuilder
     {
         /// <summary>
         /// Usage: run this program in the root folder, where it can find the 'content', 'templates' 
@@ -29,28 +29,35 @@ namespace BlogBuilder
             Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
             Liquid.UseRubyDateFormat = true;
 
-            var index = GenerateOutputs();
-            PublishOutputs(index);
+            var blogBuilder = new BlogBuilder();
+            var index = blogBuilder.GenerateOutputs();
+            blogBuilder.PublishOutputs(index);
         }
 
-        private static async void PublishOutputs(Index index)
+        private async void PublishOutputs(Index index)
         {
             FtpClient conn = await ConnectFtp(index);
 
-            var fileList = await conn.GetListingAsync(index.FtpDir);
-            foreach (var file in fileList)
+            var localFolders = ListSubDirectories(Globals.outputRoot).ToArray();
+            foreach (var localFolder in localFolders)
             {
-                //file.Modified
-                //file.Name
-                //file.Size
+                FtpListItem[] fileList = await conn.GetListingAsync(Path.Combine(index.FtpDir, localFolder));
+
+                foreach (var file in fileList)
+                {
+                    //file.Modified
+                    //file.Name
+                    //file.Size
+                }
             }
+
 
             // List local and remote folders and compare
             // Upload changed/new files
 
         }
 
-        private static async System.Threading.Tasks.Task<FtpClient> ConnectFtp(Index index)
+        private async System.Threading.Tasks.Task<FtpClient> ConnectFtp(Index index)
         {
             FtpClient conn = new FtpClient();
 
@@ -63,7 +70,7 @@ namespace BlogBuilder
             return conn;
         }
 
-        private static Index GenerateOutputs()
+        private Index GenerateOutputs()
         {
             var index = LoadIndex();
 
@@ -75,7 +82,7 @@ namespace BlogBuilder
             return index;
         }
 
-        private static Index LoadIndex()
+        private Index LoadIndex()
         {
             var input = new StreamReader(Path.Combine(Globals.contentRoot, "index.yml"));
             var deserializer = new Deserializer(namingConvention: new CamelCaseNamingConvention());
@@ -84,7 +91,7 @@ namespace BlogBuilder
             return index;
         }
 
-        private static void OutputEntries(Index index)
+        private void OutputEntries(Index index)
         {
             Template template = Template.Parse(Globals.EntryTemplate);
 
@@ -97,34 +104,34 @@ namespace BlogBuilder
             }
         }
 
-        private static void OutputGeneric(Index index, string templatePath, string outputPath)
+        private void OutputGeneric(Index index, string templatePath, string outputPath)
         {
             Template template = Template.Parse(templatePath);
             var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
             File.WriteAllText(outputPath, output);
         }
 
-        private static void OutputFrontPage(Index index)
+        private void OutputFrontPage(Index index)
         {
             OutputGeneric(index, Globals.FrontPageTemplate, index.FrontPageFullPath);
         }
 
-        private static void OutputRSS(Index index)
+        private void OutputRSS(Index index)
         {
             OutputGeneric(index, Globals.RSSTemplate, index.RSSFullPath);
         }
 
-        private static void OutputArchives(Index index)
+        private void OutputArchives(Index index)
         {
             OutputGeneric(index, Globals.ArchivesTemplate, index.ArchivesFullPath);
         }
 
-        private static void EnsureDirectoryExists(string path)
+        private void EnsureDirectoryExists(string path)
         {
             new System.IO.FileInfo(path).Directory.Create();
         }
 
-        public static SecureString getPassword()
+        public SecureString getPassword()
         {
             SecureString pwd = new SecureString();
             while (true)
@@ -150,6 +157,20 @@ namespace BlogBuilder
             }
             return pwd;
         }
+
+        public IEnumerable<string> ListSubDirectories(string path)
+        {
+            foreach (var folder in Directory.EnumerateDirectories(path))
+            {
+                yield return folder;
+
+                foreach (var subFolder in ListSubDirectories(folder))
+                {
+                    yield return subFolder;
+                }
+            }
+        }
+        
     }
 
     public class Index : Drop

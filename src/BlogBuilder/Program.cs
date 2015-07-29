@@ -1,5 +1,4 @@
-﻿using BlogBuilder;
-using DotLiquid;
+﻿using DotLiquid;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -280,115 +279,8 @@ namespace BlogBuilder
             return join;
         }
     }
-    public class Index : Drop
-    {
-        [YamlMember(Alias = "blog-title")]
-        public string BlogTitle { get; set; }
 
-        [YamlMember(Alias = "blog-author")]
-        public string BlogAuthor { get; set; }
-
-        [YamlMember(Alias = "blog-contact")]
-        public string BlogContact { get; set; }
-
-        [YamlMember(Alias = "blog-url")]
-        public string BlogUrl { get; set; }
-
-        [YamlMember(Alias = "blog-description")]
-        public string BlogDescription { get; set; }
-
-        [YamlMember(Alias = "ftp-host")]
-        public string FtpHost { get; set; }
-
-        [YamlMember(Alias = "ftp-user")]
-        public string FtpUser { get; set; }
-
-        [YamlMember(Alias = "ftp-dir")]
-        public string FtpDir { get { return ftpDir ?? ""; } set { ftpDir = value; } }
-        private string ftpDir;
-
-        private List<Entry> entries;
-        public List<Entry> Entries
-        {
-            get { return entries; }
-            set { entries = value.OrderByDescending(o => o.Date).ToList(); }
-        }
-
-        public string FrontPageFullPath
-        {
-            get
-            {
-                return Path.Combine(Globals.outputRoot, "index.html");
-            }
-        }
-
-        public string RSSFullPath
-        {
-            get
-            {
-                return Path.Combine(Globals.outputRoot, "index.rss");
-            }
-        }
-
-        public string ArchivesFullPath
-        {
-            get
-            {
-                return Path.Combine(Globals.outputRoot, "archives.html");
-            }
-        }
-    }
-
-    public class Entry : Drop
-    {
-        public string Title
-        {
-            get; set;
-        }
-        public DateTime Date { get; set; }
-
-        [YamlMember(Alias = "src")]
-        public string Source { get; set; }
-
-        public string SourceFullPath
-        {
-            get
-            {
-                return Path.Combine(Globals.contentRoot, Source);
-            }
-        }
-
-        public string Html
-        {
-            get
-            {
-                var mdContent = File.ReadAllText(SourceFullPath);
-
-                var md = new MarkdownDeep.Markdown();
-                md.ExtraMode = false;
-                md.SafeMode = false;
-                string output = md.Transform(mdContent);
-                return output;
-            }
-        }
-
-        public string WebRelativePath
-        {
-            get
-            {
-                return Path.Combine(@"\archives\", Source).Replace(".md", ".html").Replace(@"\", @"/");
-            }
-        }
-
-        public string OutputFullPath
-        {
-            get
-            {
-                return Path.Combine(Globals.outputRoot, @"archives\", Source).Replace(".md", ".html");
-            }
-        }
-    }
-
+  
     public class Globals
     {
         public static string contentRoot = @"content\";

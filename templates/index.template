@@ -67,7 +67,7 @@
 </div>
 
 <div class="side">
-  <a href="/archives.html">All entries ({{index.Entries | Size | Plus: 10 }})</a><br />
+  <a href="{{index.BlogUrl}}/archives.html">All entries ({{index.Entries | Size | Plus: 10 }})</a><br />
 <br />
 
 

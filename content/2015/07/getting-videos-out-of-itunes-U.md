@@ -4,7 +4,18 @@ The solution I found is to browse the iTunes U app in iOS and share a course by 
 This sends out a link (like this [one](https://itunes.apple.com/us/itunes-u/partnership-for-urban-health/id405936169?mt=10)) which offers a web preview of the content.
 Luckily, the source of those preview pages also includes direct links to the media files.
 
-For instance:
+
+Screenshot of sharing a course from iTunes U:
+
+<img src="http://i61.tinypic.com/xpmst0.png" width="320" height="568" />
+
+
+
+Screenshot of the email you receive:
+![mail screenshot](http://i61.tinypic.com/mj460n.png)
+
+
+Look at the source code to find the video link:
 
         preview-album="Partnership for Urban Health Research - Media" 
         preview-artist="Judea Pearl" 

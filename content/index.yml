@@ -11,6 +11,9 @@ ftp-user: blog@monstuff.com
 ftp-dir: /public_html/blog/tmp
 
 entries:
+  - title: How computers work (part 1)
+    date: 2015-07-28
+    src: 2015/07/how-computers-work-part-1.md
   - title: New blog platform
     date: 2015-07-27
     src: 2015/07/new-blog-platform.md

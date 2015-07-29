@@ -44,7 +44,7 @@ namespace BlogBuilder
         {
             FtpClient conn = await ConnectFtp(index);
 
-            var localFolders = ListSubDirectories(Globals.outputRoot).ToArray();
+            var localFolders = new string[] { Globals.outputRoot }.Concat(ListSubDirectories(Globals.outputRoot)).ToArray();
             foreach (var localFolder in localFolders)
             {
                 await PublishDelta(conn, index, localFolder);
@@ -82,11 +82,18 @@ namespace BlogBuilder
 
                     // Upload changed/new files
                     Console.WriteLine("Should upload {0}", pair.local);
+                    using (var fileStream = File.OpenRead(pair.local))
+                    {
+                        using (var ftpStream = await conn.OpenWriteAsync(Path.Combine(remotePath, new FileInfo(pair.local).Name)))
+                        {
+                            fileStream.CopyTo(ftpStream);
+                        }
+                    }
                 }
             }
         }
 
-        private static bool ShouldUpload(FtpListItem remote, string local)
+    private static bool ShouldUpload(FtpListItem remote, string local)
         {
             var shouldUpload = false;
             if (remote == null)
@@ -98,7 +105,7 @@ namespace BlogBuilder
                 if (local != null)
                 {
                     FileInfo localInfo = new FileInfo(local);
-                    if (localInfo.Length != remote.Size ||
+                    if (//localInfo.Length != remote.Size ||
                         localInfo.LastWriteTime > remote.Modified)
                     {
                         shouldUpload = true;
@@ -280,7 +287,7 @@ namespace BlogBuilder
         }
     }
 
-  
+
     public class Globals
     {
         public static string contentRoot = @"content\";

@@ -5,8 +5,7 @@ using System.Linq;
 using YamlDotNet.Serialization;
 
 namespace BlogBuilder
-{
-
+{ 
     public class Index : Drop
     {
         [YamlMember(Alias = "blog-title")]

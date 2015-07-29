@@ -63,7 +63,7 @@
 </div>
 
 <div class="sidetitle">
-  Recent Entries
+  Past Entries
 </div>
 
 <div class="side">
@@ -71,8 +71,9 @@
 <br />
 
 
-<a href="{{index.BlogUrl}}/archives/000383.html">Physics experiments to do at home</a><br />
-  ... TODO list of recent entries ...
+{% for entry in index.Entries limit:5 -%}
+  <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}">{{entry.Title | Escape}}</a><br />
+{% endfor -%}
 </div>
 
 <div class="sidetitle">

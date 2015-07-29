@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.FtpClient;
 using System.Net.FtpClient.Async;
 using System.Security;
+using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -31,44 +32,102 @@ namespace BlogBuilder
 
             var blogBuilder = new BlogBuilder();
             var index = blogBuilder.GenerateOutputs();
-            blogBuilder.PublishOutputs(index);
+            blogBuilder.PublishOutputs(index).GetAwaiter().GetResult();
         }
 
-        private async void PublishOutputs(Index index)
+        private static string TrimOutputPrefix(string path)
         {
-            Console.WriteLine("Password for user {0} on ftp host {1}. Type enter to skip publishing.", index.FtpUser, index.FtpHost);
-            var password = getPassword();
+            return path.Replace(Globals.outputRoot, "");
+        }
 
-            if (password.Length == 0) return;
+        private async Task PublishOutputs(Index index)
+        {
+            FtpClient conn = await ConnectFtp(index);
 
-            FtpClient conn = await ConnectFtp(index, password);
-
-            var localFolders = ListSubDirectories(Globals.outputRoot).ToArray();
+            var localFolders = new string[] { Globals.outputRoot }.Concat(ListSubDirectories(Globals.outputRoot)).ToArray();
             foreach (var localFolder in localFolders)
             {
-                FtpListItem[] fileList = await conn.GetListingAsync(Path.Combine(index.FtpDir, localFolder));
-
-                foreach (var file in fileList)
-                {
-                    //file.Modified
-                    //file.Name
-                    //file.Size
-                }
+                await PublishFolder(conn, localFolder);
             }
-
-
-            // List local and remote folders and compare
-            // Upload changed/new files
-
         }
 
-        private async System.Threading.Tasks.Task<FtpClient> ConnectFtp(Index index, SecureString password)
+        private async Task PublishFolder(FtpClient conn, string localFolder)
+        {
+            var localFiles = Directory.EnumerateFiles(localFolder);
+            if (localFiles.Count() == 0)
+            {
+                return;
+            }
+
+            var remotePath = TrimOutputPrefix(localFolder);
+            FtpListItem[] remoteFiles;
+            if (await conn.DirectoryExistsAsync(remotePath))
+            {
+                remoteFiles = await conn.GetListingAsync(remotePath);
+            }
+            else
+            {
+                await conn.CreateDirectoryAsync(remotePath);
+                remoteFiles = new FtpListItem[0];
+            }
+
+            var list = remoteFiles
+                .Where(f => f.Type == FtpFileSystemObjectType.File)
+                .FullOuterJoin(localFiles, r => r.Name, l => new FileInfo(l).Name, (r, l, _) => new { remote = r, local = l });
+
+            foreach (var pair in list)
+            {
+                if (ShouldUpload(pair.remote, pair.local))
+                {
+
+                    // Upload changed/new files
+                    Console.WriteLine("Should upload {0}", pair.local);
+                    using (var fileStream = File.OpenRead(pair.local))
+                    {
+                        using (var ftpStream = await conn.OpenWriteAsync(Path.Combine(remotePath, new FileInfo(pair.local).Name)))
+                        {
+                            fileStream.CopyTo(ftpStream);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static bool ShouldUpload(FtpListItem remote, string local)
+        {
+            var shouldUpload = false;
+            if (remote == null)
+            {
+                shouldUpload = true;
+            }
+            else
+            {
+                if (local != null)
+                {
+                    FileInfo localInfo = new FileInfo(local);
+                    if (//localInfo.Length != remote.Size ||
+                        localInfo.LastWriteTime > remote.Modified)
+                    {
+                        shouldUpload = true;
+                    }
+                }
+            }
+            return shouldUpload;
+        }
+
+
+
+        private async Task<FtpClient> ConnectFtp(Index index)
         {
             FtpClient conn = new FtpClient();
+
             conn.Host = index.FtpHost;
-            conn.Credentials = new NetworkCredential(index.FtpUser, password);
+            Console.WriteLine("Password for user {0} on ftp host {1}", index.FtpUser, index.FtpHost);
+            //var password = getPassword();
+            conn.Credentials = new NetworkCredential(index.FtpUser, "testtest");
 
             await conn.ConnectAsync();
+            await conn.SetWorkingDirectoryAsync(index.FtpDir);
             return conn;
         }
 
@@ -99,11 +158,35 @@ namespace BlogBuilder
 
             foreach (var entry in index.Entries)
             {
+                if (ShouldSkipEntry(entry))
+                {
+                    continue;
+                }
+
                 var output = template.Render(Hash.FromAnonymousObject(new { entry = entry, index = index }));
 
                 EnsureDirectoryExists(entry.OutputFullPath);
                 File.WriteAllText(entry.OutputFullPath, output);
             }
+        }
+
+        private bool ShouldSkipEntry(Entry entry)
+        {
+            var inputInfo = new FileInfo(entry.SourceFullPath);
+
+            if (!File.Exists(entry.OutputFullPath))
+            {
+                return false;
+            }
+
+            var outputInfo = new FileInfo(entry.OutputFullPath);
+
+            if (outputInfo.LastWriteTime > inputInfo.LastWriteTime)
+            {
+                Console.WriteLine("Skipping entry {0}", entry.Source);
+                return true;
+            }
+            return false;
         }
 
         private void OutputGeneric(Index index, string templatePath, string outputPath)
@@ -172,116 +255,39 @@ namespace BlogBuilder
                 }
             }
         }
-        
+
+
     }
 
-    public class Index : Drop
+    public static class LinqExtension
     {
-        [YamlMember(Alias = "blog-title")]
-        public string BlogTitle { get; set; }
 
-        [YamlMember(Alias = "blog-author")]
-        public string BlogAuthor { get; set; }
-
-        [YamlMember(Alias = "blog-contact")]
-        public string BlogContact { get; set; }
-
-        [YamlMember(Alias = "blog-url")]
-        public string BlogUrl { get; set; }
-
-        [YamlMember(Alias = "blog-description")]
-        public string BlogDescription { get; set; }
-
-        [YamlMember(Alias = "ftp-host")]
-        public string FtpHost { get; set; }
-
-        [YamlMember(Alias = "ftp-user")]
-        public string FtpUser { get; set; }
-
-        [YamlMember(Alias = "ftp-dir")]
-        public string FtpDir { get; set; }
-
-        private List<Entry> entries;
-        public List<Entry> Entries
+        internal static IEnumerable<TResult> FullOuterJoin<TA, TB, TKey, TResult>(
+            this IEnumerable<TA> a,
+            IEnumerable<TB> b,
+            Func<TA, TKey> selectKeyA,
+            Func<TB, TKey> selectKeyB,
+            Func<TA, TB, TKey, TResult> projection,
+            TA defaultA = default(TA),
+            TB defaultB = default(TB),
+            IEqualityComparer<TKey> cmp = null)
         {
-            get { return entries; }
-            set { entries = value.OrderByDescending(o => o.Date).ToList(); }
-        }
+            cmp = cmp ?? EqualityComparer<TKey>.Default;
+            var alookup = a.ToLookup(selectKeyA, cmp);
+            var blookup = b.ToLookup(selectKeyB, cmp);
 
-        public string FrontPageFullPath
-        {
-            get
-            {
-                return Path.Combine(Globals.outputRoot, "index.html");
-            }
-        }
+            var keys = new HashSet<TKey>(alookup.Select(p => p.Key), cmp);
+            keys.UnionWith(blookup.Select(p => p.Key));
 
-        public string RSSFullPath
-        {
-            get
-            {
-                return Path.Combine(Globals.outputRoot, "index.rss");
-            }
-        }
+            var join = from key in keys
+                       from xa in alookup[key].DefaultIfEmpty(defaultA)
+                       from xb in blookup[key].DefaultIfEmpty(defaultB)
+                       select projection(xa, xb, key);
 
-        public string ArchivesFullPath
-        {
-            get
-            {
-                return Path.Combine(Globals.outputRoot, "archives.html");
-            }
+            return join;
         }
     }
 
-    public class Entry : Drop
-    {
-        public string Title
-        {
-            get; set;
-        }
-        public DateTime Date { get; set; }
-
-        [YamlMember(Alias = "src")]
-        public string Source { get; set; }
-
-        public string SourceFullPath
-        {
-            get
-            {
-                return Path.Combine(Globals.contentRoot, Source);
-            }
-        }
-
-        public string Html
-        {
-            get
-            {
-                var mdContent = File.ReadAllText(SourceFullPath);
-
-                var md = new MarkdownDeep.Markdown();
-                md.ExtraMode = false;
-                md.SafeMode = false;
-                string output = md.Transform(mdContent);
-                return output;
-            }
-        }
-
-        public string WebRelativePath
-        {
-            get
-            {
-                return Path.Combine(@"\archives\", Source).Replace(".md", ".html").Replace(@"\", @"/");
-            }
-        }
-
-        public string OutputFullPath
-        {
-            get
-            {
-                return Path.Combine(Globals.outputRoot, @"archives\", Source).Replace(".md", ".html");
-            }
-        }
-    }
 
     public class Globals
     {

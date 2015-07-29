@@ -93,7 +93,7 @@ namespace BlogBuilder
             }
         }
 
-    private static bool ShouldUpload(FtpListItem remote, string local)
+        private static bool ShouldUpload(FtpListItem remote, string local)
         {
             var shouldUpload = false;
             if (remote == null)

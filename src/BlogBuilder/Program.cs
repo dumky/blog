@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.FtpClient;
 using System.Net.FtpClient.Async;
 using System.Security;
+using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -31,19 +32,24 @@ namespace BlogBuilder
 
             var blogBuilder = new BlogBuilder();
             var index = blogBuilder.GenerateOutputs();
-            blogBuilder.PublishOutputs(index);
+            blogBuilder.PublishOutputs(index).GetAwaiter().GetResult();
         }
 
-        private async void PublishOutputs(Index index)
+        private static string TrimOutputPrefix(string path)
+        {
+            return path.Replace(Globals.outputRoot, "");
+        }
+
+        private async Task PublishOutputs(Index index)
         {
             FtpClient conn = await ConnectFtp(index);
 
             var localFolders = ListSubDirectories(Globals.outputRoot).ToArray();
             foreach (var localFolder in localFolders)
             {
-                FtpListItem[] fileList = await conn.GetListingAsync(Path.Combine(index.FtpDir, localFolder));
+                FtpListItem[] fileList = await conn.GetListingAsync(Path.Combine(index.FtpDir, TrimOutputPrefix(localFolder)));
 
-                foreach (var file in fileList)
+                foreach (var file in fileList.Where(f => f.Type == FtpFileSystemObjectType.File))
                 {
                     //file.Modified
                     //file.Name
@@ -57,14 +63,14 @@ namespace BlogBuilder
 
         }
 
-        private async System.Threading.Tasks.Task<FtpClient> ConnectFtp(Index index)
+        private async Task<FtpClient> ConnectFtp(Index index)
         {
             FtpClient conn = new FtpClient();
 
             conn.Host = index.FtpHost;
             Console.WriteLine("Password for user {0} on ftp host {1}", index.FtpUser, index.FtpHost);
-            var password = getPassword();
-            conn.Credentials = new NetworkCredential(index.FtpUser, password);
+            //var password = getPassword();
+            conn.Credentials = new NetworkCredential(index.FtpUser, "testtest");
 
             await conn.ConnectAsync();
             return conn;
@@ -170,7 +176,7 @@ namespace BlogBuilder
                 }
             }
         }
-        
+
     }
 
     public class Index : Drop
@@ -197,7 +203,8 @@ namespace BlogBuilder
         public string FtpUser { get; set; }
 
         [YamlMember(Alias = "ftp-dir")]
-        public string FtpDir { get; set; }
+        public string FtpDir { get { return ftpDir ?? ""; } set { ftpDir = value; } }
+        private string ftpDir;
 
         private List<Entry> entries;
         public List<Entry> Entries

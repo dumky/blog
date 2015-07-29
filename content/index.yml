@@ -8,7 +8,7 @@ blog-url: http://blog.monstuff.com/tmp
 blog-description: Julien Couvreur's programming blog and more
 ftp-host: blog.monstuff.com
 ftp-user: blog@monstuff.com
-ftp-dir: /public_html/blog/tmp
+ftp-dir: 
 
 entries:
   - title: How computers work (part 1)

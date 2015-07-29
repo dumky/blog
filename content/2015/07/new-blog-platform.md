@@ -2,7 +2,7 @@ I came back from vacation with a few topics to blog about (in particular, I will
 
 What tool to use? I don't like set up or administering SQL instances. I appreciate flat files for content, static files for HTML output (easier to backup and migrate to new hosts) and the idea of managing my content in git/GitHub (versioning, access control, Markdown preview). Also, I want to keep continuity with my previous content. I looked at a few [flat-file blogging platforms](http://www.freshtechtips.com/2014/01/flat-file-blogging-software.html), but none quite fit the bill.
 
-The solution I built yesterday is simple (every tool starts that way, doesn't it): read content in Markdown files, read some metadata about the entry in a YAML file, and run those through Liquid templates to generate the HTML and RSS output files. The editing of content and metadata can be done directly in GitHub. The publishing is done via FTP.
+The solution I built yesterday is simple (every tool starts that way, doesn't it): read content in Markdown files, read some metadata about the entry in a YAML file, and run those through Liquid templates to generate the HTML and RSS output files. The editing of content and metadata can be done directly in GitHub. The publishing is done via SFTP.
 
 The code (not counting HTML templates or CSS) stays short by leveraging libraries like MarkdownDeep, YamlDotNet, DotLiquid and System.Net.FtpClient. The most work was doing recursive and incremental directory uploads via FTP. Dynamic site features such as commenting and searching are outsourced to Disqus and Google. I intend to refresh the design and stylesheets for the site, as they are dating, but that will come later. 
 

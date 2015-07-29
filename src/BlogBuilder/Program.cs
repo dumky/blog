@@ -151,11 +151,35 @@ namespace BlogBuilder
 
             foreach (var entry in index.Entries)
             {
+                if (ShouldSkipEntry(entry))
+                {
+                    continue;
+                }
+
                 var output = template.Render(Hash.FromAnonymousObject(new { entry = entry, index = index }));
 
                 EnsureDirectoryExists(entry.OutputFullPath);
                 File.WriteAllText(entry.OutputFullPath, output);
             }
+        }
+
+        private bool ShouldSkipEntry(Entry entry)
+        {
+            var inputInfo = new FileInfo(entry.SourceFullPath);
+
+            if (!File.Exists(entry.OutputFullPath))
+            {
+                return false;
+            }
+
+            var outputInfo = new FileInfo(entry.OutputFullPath);
+
+            if (outputInfo.LastWriteTime > inputInfo.LastWriteTime)
+            {
+                Console.WriteLine("Skipping entry {0}", entry.Source);
+                return true;
+            }
+            return false;
         }
 
         private void OutputGeneric(Index index, string templatePath, string outputPath)

@@ -7,3 +7,15 @@ The solution I built yesterday is simple (every tool starts that way, doesn't it
 The code (not counting HTML templates or CSS) stays short by leveraging libraries like MarkdownDeep, YamlDotNet, DotLiquid and System.Net.FtpClient. Dynamic site features such as commenting and searching are outsourced to Disqus and Google. I intend to refresh the design and stylesheets for the site, as they are dating, but that will come later. 
 
 The code for the tool and content for this blog are hosted on this [GitHub repo](https://github.com/dumky/blog).
+
+It is structured as follows:
+
+    /content/
+      index.yml (blog info, list of entries)
+      *.md (body for each blog entry)
+    /templates/
+      index.template, entry.template, rss.template, archives.template
+    /output/
+      *.html
+    /src/BlogBuilder/
+      *.cs

@@ -36,7 +36,12 @@ namespace BlogBuilder
 
         private async void PublishOutputs(Index index)
         {
-            FtpClient conn = await ConnectFtp(index);
+            Console.WriteLine("Password for user {0} on ftp host {1}. Type enter to skip publishing.", index.FtpUser, index.FtpHost);
+            var password = getPassword();
+
+            if (password.Length == 0) return;
+
+            FtpClient conn = await ConnectFtp(index, password);
 
             var localFolders = ListSubDirectories(Globals.outputRoot).ToArray();
             foreach (var localFolder in localFolders)
@@ -57,13 +62,10 @@ namespace BlogBuilder
 
         }
 
-        private async System.Threading.Tasks.Task<FtpClient> ConnectFtp(Index index)
+        private async System.Threading.Tasks.Task<FtpClient> ConnectFtp(Index index, SecureString password)
         {
             FtpClient conn = new FtpClient();
-
             conn.Host = index.FtpHost;
-            Console.WriteLine("Password for user {0} on ftp host {1}", index.FtpUser, index.FtpHost);
-            var password = getPassword();
             conn.Credentials = new NetworkCredential(index.FtpUser, password);
 
             await conn.ConnectAsync();

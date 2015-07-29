@@ -68,6 +68,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\templates\archives.template">
+      <Link>templates\archives.template</Link>
+    </None>
+    <None Include="..\..\templates\entry.template">
+      <Link>templates\entry.template</Link>
+    </None>
+    <None Include="..\..\templates\index.template">
+      <Link>templates\index.template</Link>
+    </None>
+    <None Include="..\..\templates\rss.template">
+      <Link>templates\rss.template</Link>
+    </None>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>

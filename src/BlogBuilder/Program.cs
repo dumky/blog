@@ -47,11 +47,11 @@ namespace BlogBuilder
             var localFolders = new string[] { Globals.outputRoot }.Concat(ListSubDirectories(Globals.outputRoot)).ToArray();
             foreach (var localFolder in localFolders)
             {
-                await PublishDelta(conn, index, localFolder);
+                await PublishFolder(conn, localFolder);
             }
         }
 
-        private async Task PublishDelta(FtpClient conn, Index index, string localFolder)
+        private async Task PublishFolder(FtpClient conn, string localFolder)
         {
             var localFiles = Directory.EnumerateFiles(localFolder);
             if (localFiles.Count() == 0)
@@ -59,7 +59,7 @@ namespace BlogBuilder
                 return;
             }
 
-            var remotePath = Path.Combine(index.FtpDir, TrimOutputPrefix(localFolder));
+            var remotePath = TrimOutputPrefix(localFolder);
             FtpListItem[] remoteFiles;
             if (await conn.DirectoryExistsAsync(remotePath))
             {
@@ -127,6 +127,7 @@ namespace BlogBuilder
             conn.Credentials = new NetworkCredential(index.FtpUser, "testtest");
 
             await conn.ConnectAsync();
+            await conn.SetWorkingDirectoryAsync(index.FtpDir);
             return conn;
         }
 

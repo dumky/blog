@@ -19,7 +19,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace BlogBuilder
 {
-    class BlogBuilder
+    class Program
     {
         /// <summary>
         /// Usage: run this program in the root folder, where it can find the 'content', 'templates' 
@@ -32,106 +32,13 @@ namespace BlogBuilder
 
             var blogBuilder = new BlogBuilder();
             var index = blogBuilder.GenerateOutputs();
-            blogBuilder.PublishOutputs(index).GetAwaiter().GetResult();
+            new FilePublisher().PublishOutputs(index).GetAwaiter().GetResult();
         }
+    }
 
-        private static string TrimOutputPrefix(string path)
-        {
-            return path.Replace(Globals.outputRoot, "");
-        }
-
-        private async Task PublishOutputs(Index index)
-        {
-            FtpClient conn = await ConnectFtp(index);
-
-            var localFolders = new string[] { Globals.outputRoot }.Concat(ListSubDirectories(Globals.outputRoot)).ToArray();
-            foreach (var localFolder in localFolders)
-            {
-                await PublishFolder(conn, localFolder);
-            }
-        }
-
-        private async Task PublishFolder(FtpClient conn, string localFolder)
-        {
-            var localFiles = Directory.EnumerateFiles(localFolder);
-            if (localFiles.Count() == 0)
-            {
-                return;
-            }
-
-            var remotePath = TrimOutputPrefix(localFolder);
-            FtpListItem[] remoteFiles;
-            if (await conn.DirectoryExistsAsync(remotePath))
-            {
-                remoteFiles = await conn.GetListingAsync(remotePath);
-            }
-            else
-            {
-                await conn.CreateDirectoryAsync(remotePath);
-                remoteFiles = new FtpListItem[0];
-            }
-
-            var list = remoteFiles
-                .Where(f => f.Type == FtpFileSystemObjectType.File)
-                .FullOuterJoin(localFiles, r => r.Name, l => new FileInfo(l).Name, (r, l, _) => new { remote = r, local = l });
-
-            foreach (var pair in list)
-            {
-                if (ShouldUpload(pair.remote, pair.local))
-                {
-
-                    // Upload changed/new files
-                    Console.WriteLine("Should upload {0}", pair.local);
-                    using (var fileStream = File.OpenRead(pair.local))
-                    {
-                        using (var ftpStream = await conn.OpenWriteAsync(Path.Combine(remotePath, new FileInfo(pair.local).Name)))
-                        {
-                            fileStream.CopyTo(ftpStream);
-                        }
-                    }
-                }
-            }
-        }
-
-        private static bool ShouldUpload(FtpListItem remote, string local)
-        {
-            var shouldUpload = false;
-            if (remote == null)
-            {
-                shouldUpload = true;
-            }
-            else
-            {
-                if (local != null)
-                {
-                    FileInfo localInfo = new FileInfo(local);
-                    if (//localInfo.Length != remote.Size ||
-                        localInfo.LastWriteTime > remote.Modified)
-                    {
-                        shouldUpload = true;
-                    }
-                }
-            }
-            return shouldUpload;
-        }
-
-
-
-        private async Task<FtpClient> ConnectFtp(Index index)
-        {
-            FtpClient conn = new FtpClient();
-
-            conn.Host = index.FtpHost;
-            Console.WriteLine("Password for user {0} on ftp host {1}", index.FtpUser, index.FtpHost);
-            //var password = getPassword();
-            conn.Credentials = new NetworkCredential(index.FtpUser, "testtest");
-
-            await conn.ConnectAsync();
-            await conn.SetWorkingDirectoryAsync(index.FtpDir);
-            return conn;
-        }
-
-        private Index GenerateOutputs()
+    public class BlogBuilder
+    {
+        public Index GenerateOutputs()
         {
             var index = LoadIndex();
 
@@ -215,8 +122,96 @@ namespace BlogBuilder
         {
             new System.IO.FileInfo(path).Directory.Create();
         }
+    }
 
-        public SecureString getPassword()
+    public class FilePublisher
+    {
+        public async Task PublishOutputs(Index index)
+        {
+            Console.WriteLine("Password for user {0} on ftp host {1}. Type enter to skip publishing.", index.FtpUser, index.FtpHost);
+            var password = getPassword();
+            //if (password.Length == 0) return;
+
+            FtpClient conn = await ConnectFtp(index, password);
+
+            var localFolders = new string[] { Globals.outputRoot }.Concat(ListSubDirectories(Globals.outputRoot)).ToArray();
+            foreach (var localFolder in localFolders)
+            {
+                await PublishFolder(conn, localFolder);
+            }
+        }
+
+        private async Task PublishFolder(FtpClient conn, string localFolder)
+        {
+            var localFiles = Directory.EnumerateFiles(localFolder);
+            if (localFiles.Count() == 0)
+            {
+                return;
+            }
+
+            var remotePath = TrimOutputPrefix(localFolder);
+            FtpListItem[] remoteFiles;
+            if (await conn.DirectoryExistsAsync(remotePath))
+            {
+                remoteFiles = await conn.GetListingAsync(remotePath);
+            }
+            else
+            {
+                await conn.CreateDirectoryAsync(remotePath);
+                remoteFiles = new FtpListItem[0];
+            }
+
+            var list = remoteFiles
+                .Where(f => f.Type == FtpFileSystemObjectType.File)
+                .FullOuterJoin(localFiles, r => r.Name, l => new FileInfo(l).Name, (r, l, _) => new { remote = r, local = l });
+
+            foreach (var pair in list)
+            {
+                if (ShouldUpload(pair.remote, pair.local))
+                {
+                    Console.WriteLine("Uploading {0}", pair.local);
+                    using (var fileStream = File.OpenRead(pair.local))
+                    {
+                        using (var ftpStream = await conn.OpenWriteAsync(Path.Combine(remotePath, new FileInfo(pair.local).Name)))
+                        {
+                            fileStream.CopyTo(ftpStream);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static bool ShouldUpload(FtpListItem remote, string local)
+        {
+            if (remote == null)
+            {
+                return true;
+            }
+
+            if (local != null)
+            {
+                FileInfo localInfo = new FileInfo(local);
+                if (localInfo.LastWriteTime > remote.Modified)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private async Task<FtpClient> ConnectFtp(Index index, SecureString password)
+        {
+            FtpClient conn = new FtpClient();
+            conn.Host = index.FtpHost;
+            conn.Credentials = new NetworkCredential(index.FtpUser, "testtest");
+
+            await conn.ConnectAsync();
+            await conn.SetWorkingDirectoryAsync(index.FtpDir);
+            return conn;
+        }
+
+        private SecureString getPassword()
         {
             SecureString pwd = new SecureString();
             while (true)
@@ -256,7 +251,10 @@ namespace BlogBuilder
             }
         }
 
-
+        private static string TrimOutputPrefix(string path)
+        {
+            return path.Replace(Globals.outputRoot, "");
+        }
     }
 
     public static class LinqExtension

@@ -1,4 +1,5 @@
-﻿using DotLiquid;
+﻿using BlogBuilder;
+using DotLiquid;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,21 +48,68 @@ namespace BlogBuilder
             var localFolders = ListSubDirectories(Globals.outputRoot).ToArray();
             foreach (var localFolder in localFolders)
             {
-                FtpListItem[] fileList = await conn.GetListingAsync(Path.Combine(index.FtpDir, TrimOutputPrefix(localFolder)));
+                await PublishDelta(conn, index, localFolder);
+            }
+        }
 
-                foreach (var file in fileList.Where(f => f.Type == FtpFileSystemObjectType.File))
-                {
-                    //file.Modified
-                    //file.Name
-                    //file.Size
-                }
+        private async Task PublishDelta(FtpClient conn, Index index, string localFolder)
+        {
+            var localFiles = Directory.EnumerateFiles(localFolder);
+            if (localFiles.Count() == 0)
+            {
+                return;
             }
 
+            var remotePath = Path.Combine(index.FtpDir, TrimOutputPrefix(localFolder));
+            FtpListItem[] remoteFiles;
+            if (await conn.DirectoryExistsAsync(remotePath))
+            {
+                remoteFiles = await conn.GetListingAsync(remotePath);
+            }
+            else
+            {
+                await conn.CreateDirectoryAsync(remotePath);
+                remoteFiles = new FtpListItem[0];
+            }
 
-            // List local and remote folders and compare
-            // Upload changed/new files
+            var list = remoteFiles
+                .Where(f => f.Type == FtpFileSystemObjectType.File)
+                .FullOuterJoin(localFiles, r => r.Name, l => new FileInfo(l).Name, (r, l, _) => new { remote = r, local = l });
 
+            foreach (var pair in list)
+            {
+                if (ShouldUpload(pair.remote, pair.local))
+                {
+
+                    // Upload changed/new files
+                    Console.WriteLine("Should upload {0}", pair.local);
+                }
+            }
         }
+
+        private static bool ShouldUpload(FtpListItem remote, string local)
+        {
+            var shouldUpload = false;
+            if (remote == null)
+            {
+                shouldUpload = true;
+            }
+            else
+            {
+                if (local != null)
+                {
+                    FileInfo localInfo = new FileInfo(local);
+                    if (localInfo.Length != remote.Size ||
+                        localInfo.LastWriteTime > remote.Modified)
+                    {
+                        shouldUpload = true;
+                    }
+                }
+            }
+            return shouldUpload;
+        }
+
+
 
         private async Task<FtpClient> ConnectFtp(Index index)
         {
@@ -177,8 +225,37 @@ namespace BlogBuilder
             }
         }
 
+
     }
 
+    public static class LinqExtension
+    {
+
+        internal static IEnumerable<TResult> FullOuterJoin<TA, TB, TKey, TResult>(
+            this IEnumerable<TA> a,
+            IEnumerable<TB> b,
+            Func<TA, TKey> selectKeyA,
+            Func<TB, TKey> selectKeyB,
+            Func<TA, TB, TKey, TResult> projection,
+            TA defaultA = default(TA),
+            TB defaultB = default(TB),
+            IEqualityComparer<TKey> cmp = null)
+        {
+            cmp = cmp ?? EqualityComparer<TKey>.Default;
+            var alookup = a.ToLookup(selectKeyA, cmp);
+            var blookup = b.ToLookup(selectKeyB, cmp);
+
+            var keys = new HashSet<TKey>(alookup.Select(p => p.Key), cmp);
+            keys.UnionWith(blookup.Select(p => p.Key));
+
+            var join = from key in keys
+                       from xa in alookup[key].DefaultIfEmpty(defaultA)
+                       from xb in blookup[key].DefaultIfEmpty(defaultB)
+                       select projection(xa, xb, key);
+
+            return join;
+        }
+    }
     public class Index : Drop
     {
         [YamlMember(Alias = "blog-title")]

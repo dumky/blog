@@ -13,6 +13,7 @@ Screenshot of sharing a course from iTunes U:
   
 
 Screenshot of the email you receive:
+
 ![mail screenshot](http://i57.tinypic.com/34ysec3.png)
   
 

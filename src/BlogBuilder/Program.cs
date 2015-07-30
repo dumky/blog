@@ -17,6 +17,8 @@ using YamlDotNet.Serialization.NamingConventions;
 // TODO: improve the CSS files
 // TODO: implement search
 // TODO: improve templates and support mobile rendering
+// TODO: fix style for code blocks to have grey background and overflow like https://github.com/dotliquid/dotliquid/wiki/DotLiquid-for-Designers
+
 
 namespace BlogBuilder
 {
@@ -87,9 +89,12 @@ namespace BlogBuilder
                 return false;
             }
 
+            var templateInfo = new FileInfo(Globals.EntryTemplatePath);
+
             var outputInfo = new FileInfo(entry.OutputFullPath);
 
-            if (outputInfo.LastWriteTime > inputInfo.LastWriteTime)
+            if (outputInfo.LastWriteTime > inputInfo.LastWriteTime &&
+                outputInfo.LastAccessTime > templateInfo.LastWriteTime)
             {
                 Console.WriteLine("Skipping entry {0}", entry.Source);
                 return true;
@@ -313,11 +318,13 @@ namespace BlogBuilder
                 return File.ReadAllText(Path.Combine(templateRoot, "index.liquid"));
             }
         }
+
+        public static string EntryTemplatePath { get { return Path.Combine(templateRoot, "entry.liquid");  } }
         public static string EntryTemplate
         {
             get
             {
-                return File.ReadAllText(Path.Combine(templateRoot, "entry.liquid"));
+                return File.ReadAllText(EntryTemplatePath);
             }
         }
 

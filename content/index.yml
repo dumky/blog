@@ -2,7 +2,7 @@
 # no tabs allowed
 
 blog-title: Curiosity is bliss
-blog-author: Julien Couvreur
+blog-author: Julien
 blog-contact: julien.couvreur@gmail.com
 blog-url: http://blog.monstuff.com
 blog-description: Julien Couvreur's programming blog and more
@@ -12,14 +12,13 @@ ftp-dir:
 
 entries:
   - title: Getting videos out of iTunes U
-    date: 2015-07-29
+    date: July 29, 2015
     src: 2015/07/getting-videos-out-of-itunes-U.md
-    draft: true
   - title: How computers work (part 1)
     date: 2015-07-28
     src: 2015/07/how-computers-work-part-1.md
     draft: true
   - title: New blog platform
-    date: 2015-07-27
+    date: 2015-07-27 5:00 pm
     src: 2015/07/new-blog-platform.md
 ...

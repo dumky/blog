@@ -307,14 +307,14 @@ namespace BlogBuilder
         {
             get
             {
-                return File.ReadAllText(Path.Combine(templateRoot, "index.template"));
+                return File.ReadAllText(Path.Combine(templateRoot, "index.liquid"));
             }
         }
         public static string EntryTemplate
         {
             get
             {
-                return File.ReadAllText(Path.Combine(templateRoot, "entry.template"));
+                return File.ReadAllText(Path.Combine(templateRoot, "entry.liquid"));
             }
         }
 
@@ -322,14 +322,14 @@ namespace BlogBuilder
         {
             get
             {
-                return File.ReadAllText(Path.Combine(templateRoot, "rss.template"));
+                return File.ReadAllText(Path.Combine(templateRoot, "rss.liquid"));
             }
         }
         public static string ArchivesTemplate
         {
             get
             {
-                return File.ReadAllText(Path.Combine(templateRoot, "archives.template"));
+                return File.ReadAllText(Path.Combine(templateRoot, "archives.liquid"));
             }
         }
     }

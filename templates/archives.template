@@ -21,7 +21,7 @@
 <div class="blogbody">
   
 {% for entry in index.Entries limit:5 -%}
-<a href="{{index.BlogUrl}}{{entry.WebRelativePath}}">{{entry.Title | Escape}}</a><br />
+<a href="{{index.BlogUrl}}{{entry.WebRelativePath}}">{{entry.Title | Escape}}</a> {% if entry.Draft == true -%}(draft){% endif -%}<br />
 {% endfor -%}
 
 </div>

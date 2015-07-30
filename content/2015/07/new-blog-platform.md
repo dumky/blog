@@ -14,7 +14,7 @@ It is structured as follows:
       index.yml (blog info, list of entries)
       *.md (body for each blog entry)
     /templates/
-      index.template, entry.template, rss.template, archives.template
+      index.liquid, entry.liquid, rss.liquid, archives.liquid
     /output/
       *.html
     /src/BlogBuilder/

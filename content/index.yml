@@ -8,7 +8,7 @@ blog-url: http://blog.monstuff.com/tmp
 blog-description: Julien Couvreur's programming blog and more
 ftp-host: blog.monstuff.com
 ftp-user: blog@monstuff.com
-ftp-dir: 
+ftp-dir: tmp
 
 entries:
   - title: Getting videos out of iTunes U

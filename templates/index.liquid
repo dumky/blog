@@ -23,8 +23,7 @@
 <div class="blog">
 
 
-{% for entry in index.Entries limit:5 -%}
-{% if entry.Draft != true -%}
+{% for entry in index.PublishedEntries limit:5 -%}
 	<div class="blogbody">
     <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}"><h2 class="title">{{entry.Title | Escape}}</h2></a>
 {{entry.Html}}
@@ -33,8 +32,9 @@
         | {{entry.Date}}
 	</div>
 	</div>
-{% endif -%}
 {% endfor -%}
+
+{% include "legacy_index" %}
 
 </div>
 </div>
@@ -69,11 +69,11 @@
 </div>
 
 <div class="side">
-  <a href="{{index.BlogUrl}}/archives.html">All entries ({{index.Entries | Size | Plus: 10 }})</a><br />
+  <a href="{{index.BlogUrl}}/archives.html">All entries ({{index.Entries | Size | Plus: 273 }})</a><br />
 <br />
 
 
-{% for entry in index.Entries limit:5 -%}
+{% for entry in index.PublishedEntries limit:5 -%}
   <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}">{{entry.Title | Escape}}</a><br />
 {% endfor -%}
 </div>

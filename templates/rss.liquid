@@ -17,16 +17,14 @@
 <managingEditor>{{index.BlogContact}}</managingEditor>
 
 
-{% for entry in index.Entries limit:5 -%}
-{% if entry.Draft != true -%}
-<item>
+{% for entry in index.PublishedEntries limit:5 -%}
+  <item>
   <title>{{entry.Title | Escape}}</title>
   <link>{{index.BlogUrl}}{{entry.WebRelativePath}}</link>
   <description><![CDATA[{{entry.Html}}]]></description>
   <guid isPermaLink="true">{{index.BlogUrl}}{{entry.WebRelativePath}}</guid>
   <pubDate>{{entry.Date}}</pubDate>
 </item>
-{% endif -%}
 {% endfor -%}
 
 </channel>

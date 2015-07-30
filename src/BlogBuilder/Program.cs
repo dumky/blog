@@ -133,7 +133,10 @@ namespace BlogBuilder
     {
         public async Task PublishOutputs(Index index)
         {
+            Console.WriteLine();
             Console.WriteLine("Password for user {0} on ftp host {1}. Type enter to skip publishing.", index.FtpUser, index.FtpHost);
+            Console.WriteLine();
+            
             var password = getPassword();
             if (password.Length == 0)
             {

@@ -40,6 +40,11 @@ namespace BlogBuilder
             set { entries = value.OrderByDescending(o => o.Date).ToList(); }
         }
 
+        public List<Entry> PublishedEntries
+        {
+            get { return entries.Where(e => !e.Draft).ToList();  }
+        }
+
         public string FrontPageFullPath
         {
             get

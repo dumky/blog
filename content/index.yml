@@ -4,11 +4,11 @@
 blog-title: Curiosity is bliss
 blog-author: Julien Couvreur
 blog-contact: julien.couvreur@gmail.com
-blog-url: http://blog.monstuff.com/tmp
+blog-url: http://blog.monstuff.com
 blog-description: Julien Couvreur's programming blog and more
 ftp-host: blog.monstuff.com
 ftp-user: blog@monstuff.com
-ftp-dir: tmp
+ftp-dir: 
 
 entries:
   - title: Getting videos out of iTunes U

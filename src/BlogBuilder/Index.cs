@@ -57,7 +57,7 @@ namespace BlogBuilder
         {
             get
             {
-                return Path.Combine(Globals.outputRoot, "index.rss");
+                return Path.Combine(Globals.outputRoot, "index.xml");
             }
         }
 

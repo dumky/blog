@@ -24,6 +24,7 @@
 
 
 {% for entry in index.Entries limit:5 -%}
+{% if entry.Draft != true -%}
 	<div class="blogbody">
     <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}"><h2 class="title">{{entry.Title | Escape}}</h2></a>
 {{entry.Html}}
@@ -32,6 +33,7 @@
         | {{entry.Date}}
 	</div>
 	</div>
+{% endif -%}
 {% endfor -%}
 
 </div>

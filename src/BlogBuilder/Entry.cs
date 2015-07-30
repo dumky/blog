@@ -16,6 +16,9 @@ namespace BlogBuilder
         [YamlMember(Alias = "src")]
         public string Source { get; set; }
 
+        [YamlMember(Alias = "draft")]
+        public bool Draft { get; set; }
+
         public string SourceFullPath
         {
             get

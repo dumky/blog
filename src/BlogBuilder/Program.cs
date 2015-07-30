@@ -1,4 +1,5 @@
 ﻿using DotLiquid;
+using DotLiquid.FileSystems;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +16,7 @@ using YamlDotNet.Serialization.NamingConventions;
 // TODO: figure out what to do with static files for the blog (CSS, JS, etc)
 // TODO: improve the CSS files
 // TODO: implement search
-
+// TODO: improve templates and support mobile rendering
 
 namespace BlogBuilder
 {
@@ -29,9 +30,9 @@ namespace BlogBuilder
         {
             Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
             Liquid.UseRubyDateFormat = true;
+            Template.FileSystem = new LocalFileSystem(Path.Combine(System.IO.Directory.GetCurrentDirectory(), Globals.templateRoot)); 
 
-            var blogBuilder = new BlogBuilder();
-            var index = blogBuilder.GenerateOutputs();
+            var index = new BlogBuilder().GenerateOutputs();
             new FilePublisher().PublishOutputs(index).GetAwaiter().GetResult();
         }
     }
@@ -100,6 +101,10 @@ namespace BlogBuilder
         {
             Template template = Template.Parse(templatePath);
             var output = template.Render(Hash.FromAnonymousObject(new { index = index }));
+            foreach (var error in template.Errors)
+            {
+                Console.WriteLine(error.Message);
+            }
             File.WriteAllText(outputPath, output);
         }
 
@@ -130,8 +135,11 @@ namespace BlogBuilder
         {
             Console.WriteLine("Password for user {0} on ftp host {1}. Type enter to skip publishing.", index.FtpUser, index.FtpHost);
             var password = getPassword();
-            //if (password.Length == 0) return;
-
+            if (password.Length == 0)
+            {
+                Console.WriteLine("Skipped publishing.");
+                return;
+            }
             FtpClient conn = await ConnectFtp(index, password);
 
             var localFolders = new string[] { Globals.outputRoot }.Concat(ListSubDirectories(Globals.outputRoot)).ToArray();
@@ -204,7 +212,7 @@ namespace BlogBuilder
         {
             FtpClient conn = new FtpClient();
             conn.Host = index.FtpHost;
-            conn.Credentials = new NetworkCredential(index.FtpUser, "testtest");
+            conn.Credentials = new NetworkCredential(index.FtpUser, password);
 
             await conn.ConnectAsync();
             await conn.SetWorkingDirectoryAsync(index.FtpDir);
@@ -235,6 +243,7 @@ namespace BlogBuilder
                     Console.Write("*");
                 }
             }
+            Console.WriteLine();
             return pwd;
         }
 

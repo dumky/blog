@@ -24,6 +24,8 @@
 <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}">{{entry.Title | Escape}}</a> {% if entry.Draft == true -%}(draft){% endif -%}<br />
 {% endfor -%}
 
+{% include "legacy_archives" %}
+
 </div>
 </div>
 </div>

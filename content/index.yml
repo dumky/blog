@@ -6,6 +6,7 @@ blog-author: Julien Couvreur
 blog-contact: julien.couvreur@gmail.com
 blog-url: http://blog.monstuff.com
 blog-description: Julien Couvreur's programming blog and more
+blog-disqus: curiosityisbliss
 ftp-host: blog.monstuff.com
 ftp-user: blog@monstuff.com
 ftp-dir: 
@@ -14,7 +15,6 @@ entries:
   - title: Getting videos out of iTunes U
     date: 2015-07-29
     src: 2015/07/getting-videos-out-of-itunes-U.md
-    draft: true
   - title: How computers work (part 1)
     date: 2015-07-28
     src: 2015/07/how-computers-work-part-1.md

@@ -23,6 +23,9 @@ namespace BlogBuilder
         [YamlMember(Alias = "blog-description")]
         public string BlogDescription { get; set; }
 
+        [YamlMember(Alias = "blog-disqus")]
+        public string BlogDisqus { get; set; }
+
         [YamlMember(Alias = "ftp-host")]
         public string FtpHost { get; set; }
 

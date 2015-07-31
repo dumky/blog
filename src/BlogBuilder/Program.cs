@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-// TODO: fix date formats
-// TODO: figure out what to do with static files for the blog (CSS, JS, etc)
 // TODO: improve the CSS files
-// TODO: implement search
 // TODO: improve templates and support mobile rendering
+// TODO: redirect old Atom and other feeds
+// TODO: figure out what to do with static files for the blog (CSS, JS, etc)
+
 
 namespace BlogBuilder
 {

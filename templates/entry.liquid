@@ -22,8 +22,8 @@
   <h2 class="title">{{entry.Title | Escape}}</h2>
 
   {{entry.Html}}
-
-  <span class="posted">Posted by Julien on July 25, 2015. <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}" rel="bookmark">Permalink</a>
+   
+  <span class="posted">Posted by {{index.BlogAuthor}} on {{entry.FriendlyDate}}. <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}" rel="bookmark">Permalink</a>
   <br /></span>
 </div>
 
@@ -32,7 +32,7 @@
 <div class="comments-body">
     <div id="disqus_thread"></div>
     <script type="text/javascript">
-        var disqus_shortname = 'curiosityisbliss'; 
+        var disqus_shortname = '{{index.BlogDisqus}}'; 
         var disqus_identifier = '{{entry.WebRelativePath}}';
         var disqus_url = '{{index.BlogUrl}}{{entry.WebRelativePath}}';
 
@@ -49,6 +49,17 @@
 
 </div>
 </div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-74363-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 
 </body>
 </html>

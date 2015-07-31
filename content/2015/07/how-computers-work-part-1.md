@@ -1,4 +1,5 @@
-A while back, one of my nephews asked me how computers work. During my recent trip, I spent some time with him to answer that question. I will share this introduction in the next few  posts. I will provided more detailed references at the end. Feel free to drop a comment if something needs elaborating.
+A while back, one of my nephews asked me how computers work. During my recent trip, I spent some time with him to answer that question. I will share this introduction in the next few  posts.  
+I will provided more detailed references at the end. Feel free to drop a comment if something needs elaborating.
 
 "How do computers work?" can be answered at many levels, just like "How does life work?". For life, you can explain that there is an ecosystem of plants and animals, the interaction of animals, the physical and behavioral attributes of individuals of a specie, the function of different organs in their body, the cellular structure of each organ, or the atomic structure of different types of cells.
 

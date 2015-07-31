@@ -56,6 +56,8 @@ namespace BlogBuilder
             }
         }
 
+        public string RssUrl { get { return BlogUrl + "/index.xml";  } }
+
         public string RSSFullPath
         {
             get

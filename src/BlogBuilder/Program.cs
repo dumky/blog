@@ -9,6 +9,7 @@ using System.Net.FtpClient;
 using System.Net.FtpClient.Async;
 using System.Security;
 using System.Threading.Tasks;
+using System.Web;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -30,10 +31,19 @@ namespace BlogBuilder
         {
             Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
             Liquid.UseRubyDateFormat = true;
-            Template.FileSystem = new LocalFileSystem(Path.Combine(System.IO.Directory.GetCurrentDirectory(), Globals.templateRoot)); 
+            Template.FileSystem = new LocalFileSystem(Path.Combine(System.IO.Directory.GetCurrentDirectory(), Globals.templateRoot));
+            Template.RegisterFilter(typeof(UrlEncodeFilter));
 
             var index = new BlogBuilder().GenerateOutputs();
             new FilePublisher().PublishOutputs(index).GetAwaiter().GetResult();
+        }
+    }
+
+    public static class UrlEncodeFilter
+    {
+        public static string UrlEncode(string input)
+        {
+            return HttpUtility.UrlEncode(input);
         }
     }
 

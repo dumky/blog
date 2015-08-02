@@ -13,9 +13,13 @@ http://blog.monstuff.com/ad-block-pac.js
 
 # Security considerations
 
-TODO
+Configuring a PAC file into your operating system can be dangerous. If the PAC file is adversarial or was modified by a hacker, the attacker could send parts or all of your web traffic through a proxy of his choice.  
+You could use your own copy of this file, but you'd have to host your copy securely.  
 
-This idea comes from the [FAQ of Weblock](https://www.weblockapp.com/faq/#question-7), an iOS app which generates PAC files). The FAQ offers a good explanation for this choice:
+The solution I adopted is to host the PAC file on a CDN of static files. The CDN does not allow updating an existing file in-place, it only allows adding new version. The only downside is that you'll have to update your settings if you want to use a newer version of the file.    
+Also, it is good to review the contents of the PAC file. It is pretty easy to read and it should be clear that it is using Google's DNS servers as blackhole proxies.
+
+Btw, this idea comes from the [FAQ of Weblock](https://www.weblockapp.com/faq/#question-7), an iOS app which generates PAC files. The FAQ offers a good explanation for this choice:
 
 > 1. iOS requires dummy proxy to be a valid IP address accepting connections (so it's not possible to use local IP address of your device, since there is no open port to connect to). 
 > 2. It's really responsive, fast and stable anywhere in the world. 

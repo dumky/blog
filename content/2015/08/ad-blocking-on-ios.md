@@ -6,7 +6,9 @@ So I dug up an existing ad-blocking PAC file which seems somehow up-to-date (fro
 
 You can do the same and configure your mobile device to use the PAC file. 
 
-TODO: can ads in apps be blocked too?
+TODO: can ads in apps be blocked too?  
+TODO: can the PAC file be hosted inside an installed app?
+
 
 http://blog.monstuff.com/ad-block-pac.js
 

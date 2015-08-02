@@ -6,13 +6,14 @@ So I dug up an existing ad-blocking PAC files which seems somehow up-to-date (fr
 
 You can do the same and configure your mobile device to use the PAC file. 
 
+TODO: can ads in apps be blocked too?
 
 http://blog.monstuff.com/ad-block-pac.js
 
 
 # Security considerations
 
-
+TODO
 
 This idea comes from the [FAQ of Weblock](https://www.weblockapp.com/faq/#question-7), an iOS app which generates PAC files). The FAQ offers a good explanation for this choice:
 

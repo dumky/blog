@@ -30,20 +30,12 @@ namespace BlogBuilder
         static void Main(string[] args)
         {
             Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
-            Liquid.UseRubyDateFormat = true;
             Template.FileSystem = new LocalFileSystem(Path.Combine(System.IO.Directory.GetCurrentDirectory(), Globals.templateRoot));
             Template.RegisterFilter(typeof(UrlEncodeFilter));
+            Liquid.UseRubyDateFormat = true;
 
             var index = new BlogBuilder().GenerateOutputs();
             new FilePublisher().PublishOutputs(index).GetAwaiter().GetResult();
-        }
-    }
-
-    public static class UrlEncodeFilter
-    {
-        public static string UrlEncode(string input)
-        {
-            return HttpUtility.UrlEncode(input);
         }
     }
 
@@ -308,7 +300,6 @@ namespace BlogBuilder
         }
     }
 
-
     public class Globals
     {
         public static string contentRoot = @"content\";
@@ -316,34 +307,17 @@ namespace BlogBuilder
         public static string staticRoot = @"static\";
         public static string outputRoot = @"output\";
 
-        public static string FrontPageTemplate
+        public static string FrontPageTemplate = File.ReadAllText(Path.Combine(templateRoot, "index.liquid"));
+        public static string EntryTemplate = File.ReadAllText(Path.Combine(templateRoot, "entry.liquid"));
+        public static string RSSTemplate = File.ReadAllText(Path.Combine(templateRoot, "rss.liquid"));
+        public static string ArchivesTemplate = File.ReadAllText(Path.Combine(templateRoot, "archives.liquid"));
+    }
+    
+    public static class UrlEncodeFilter
+    {
+        public static string UrlEncode(string input)
         {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "index.liquid"));
-            }
-        }
-        public static string EntryTemplate
-        {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "entry.liquid"));
-            }
-        }
-
-        public static string RSSTemplate
-        {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "rss.liquid"));
-            }
-        }
-        public static string ArchivesTemplate
-        {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "archives.liquid"));
-            }
+            return HttpUtility.UrlEncode(input);
         }
     }
 }

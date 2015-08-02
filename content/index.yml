@@ -12,13 +12,16 @@ ftp-user: blog@monstuff.com
 ftp-dir: 
 
 entries:
+  - title: How computers work (part 2)
+    date: 2015-08-02
+    src: 2015/08/how-computers-work-part-2.md
+    draft: true
   - title: Getting videos out of iTunes U
     date: 2015-07-29
     src: 2015/07/getting-videos-out-of-itunes-U.md
   - title: How computers work (part 1)
-    date: 2015-07-28
+    date: 2015-07-31
     src: 2015/07/how-computers-work-part-1.md
-    draft: true
   - title: New blog platform
     date: 2015-07-27
     src: 2015/07/new-blog-platform.md

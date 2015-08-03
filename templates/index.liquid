@@ -29,7 +29,7 @@
 {{entry.Html}}
 	<div class="posted"><a href="{{index.BlogUrl}}{{entry.WebRelativePath}}">Permalink</a>
 		| <a href="{{index.BlogUrl}}{{entry.WebRelativePath}}#disqus_thread" data-disqus-identifier="{{entry.WebRelativePath}}">Comments (0)</a>
-        | {{entry.Date}}
+        | {{entry.FriendlyDate}}
 	</div>
 	</div>
 {% endfor -%}
@@ -42,17 +42,30 @@
 
 <div id="links">
   <div class="sidetitle">
-  Subscribe
+  Get Updates
   </div>
-  <div class="side">Receive the updates to this site using this <a href="{{index.BlogUrl}}/index.xml">RSS feed</a>.
-</div>
+  <div class="side"><a href="{{index.RssUrl}}">via RSS</a></div>
+  <div class="side"><a href='http://cloud.feedly.com/#subscription%2Ffeed%2F{{index.RssUrl | UrlEncode}}'  target='blank'><!--<img id='feedlyFollow' src='http://s3.feedly.com/img/follows/feedly-follow-logo-green_2x.png' alt='follow us in feedly' width='28' height='28'>--> via Feedly</a></div>
+
 
 <div class="sidetitle">
   Search
 </div>
  
 <div class="side">
-  ... TODO Search ...
+<script>
+  (function() {
+    var cx = '005101733046013339255:zbcros0nd_0';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:searchbox-only></gcse:searchbox-only>
 </div>
 
 
@@ -104,6 +117,16 @@
     }());
     </script>
     
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-74363-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 
 </body>
 </html>

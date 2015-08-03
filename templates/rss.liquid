@@ -5,20 +5,26 @@
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
   xmlns:admin="http://webns.net/mvcb/"
-  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:webfeeds="http://webfeeds.org/rss/1.0">
 
 <channel>
-<title>{{index.BlogTitle}}</title>
-<link>{{index.BlogUrl}}</link>
-<description>{{index.BlogDescription | Escape}}</description>
-<language>en-us</language>
-<lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
-<pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
-<managingEditor>{{index.BlogContact}}</managingEditor>
+  <title>{{index.BlogTitle}}</title>
+  <link>{{index.BlogUrl}}</link>
+  <description>{{index.BlogDescription | Escape}}</description>
+  <language>en-us</language>
+  <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+  <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+  <managingEditor>{{index.BlogContact}}</managingEditor>
+  <webfeeds:analytics id="UA-74363-1" engine="GoogleAnalytics"/>
 
+  <!--
+        <webfeeds:cover image="http://yoursite.com/a-large-cover-image.png" />
+        <webfeeds:icon>http://feedly.com/icon.svg</webfeeds:icon>
+-->
 
-{% for entry in index.PublishedEntries limit:5 -%}
-  <item>
+ {% for entry in index.PublishedEntries limit:5 -%}
+ <item>
   <title>{{entry.Title | Escape}}</title>
   <link>{{index.BlogUrl}}{{entry.WebRelativePath}}</link>
   <description><![CDATA[{{entry.Html}}]]></description>

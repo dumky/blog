@@ -8,7 +8,7 @@ Luckily, the source of those preview pages also includes direct links to the med
 
 Screenshot of sharing a course from iTunes U:
 
-<img src="http://i61.tinypic.com/xpmst0.png" width="320" height="568" />
+<img src="http://i57.tinypic.com/2ynexj5.png" width="320" height="568" />
 
   
 

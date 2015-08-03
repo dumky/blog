@@ -13,6 +13,8 @@ namespace BlogBuilder
         }
         public DateTime Date { get; set; }
 
+        public string FriendlyDate {  get { return string.Format("{0:MMMM d}, {0:yyyy}", Date); } }
+
         [YamlMember(Alias = "src")]
         public string Source { get; set; }
 

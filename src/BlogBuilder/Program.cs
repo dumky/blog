@@ -9,15 +9,14 @@ using System.Net.FtpClient;
 using System.Net.FtpClient.Async;
 using System.Security;
 using System.Threading.Tasks;
+using System.Web;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-// TODO: fix date formats
-// TODO: figure out what to do with static files for the blog (CSS, JS, etc)
 // TODO: improve the CSS files
-// TODO: implement search
 // TODO: improve templates and support mobile rendering
-// TODO: fix style for code blocks to have grey background and overflow like https://github.com/dotliquid/dotliquid/wiki/DotLiquid-for-Designers
+// TODO: redirect old Atom and other feeds
+// TODO: figure out what to do with static files for the blog (CSS, JS, etc)
 
 
 namespace BlogBuilder
@@ -31,8 +30,9 @@ namespace BlogBuilder
         static void Main(string[] args)
         {
             Template.NamingConvention = new DotLiquid.NamingConventions.CSharpNamingConvention();
+            Template.FileSystem = new LocalFileSystem(Path.Combine(System.IO.Directory.GetCurrentDirectory(), Globals.templateRoot));
+            Template.RegisterFilter(typeof(UrlEncodeFilter));
             Liquid.UseRubyDateFormat = true;
-            Template.FileSystem = new LocalFileSystem(Path.Combine(System.IO.Directory.GetCurrentDirectory(), Globals.templateRoot)); 
 
             var index = new BlogBuilder().GenerateOutputs();
             new FilePublisher().PublishOutputs(index).GetAwaiter().GetResult();
@@ -89,12 +89,9 @@ namespace BlogBuilder
                 return false;
             }
 
-            var templateInfo = new FileInfo(Globals.EntryTemplatePath);
-
             var outputInfo = new FileInfo(entry.OutputFullPath);
 
-            if (outputInfo.LastWriteTime > inputInfo.LastWriteTime &&
-                outputInfo.LastAccessTime > templateInfo.LastWriteTime)
+            if (outputInfo.LastWriteTime > inputInfo.LastWriteTime)
             {
                 Console.WriteLine("Skipping entry {0}", entry.Source);
                 return true;
@@ -303,7 +300,6 @@ namespace BlogBuilder
         }
     }
 
-
     public class Globals
     {
         public static string contentRoot = @"content\";
@@ -311,36 +307,17 @@ namespace BlogBuilder
         public static string staticRoot = @"static\";
         public static string outputRoot = @"output\";
 
-        public static string FrontPageTemplate
+        public static string FrontPageTemplate = File.ReadAllText(Path.Combine(templateRoot, "index.liquid"));
+        public static string EntryTemplate = File.ReadAllText(Path.Combine(templateRoot, "entry.liquid"));
+        public static string RSSTemplate = File.ReadAllText(Path.Combine(templateRoot, "rss.liquid"));
+        public static string ArchivesTemplate = File.ReadAllText(Path.Combine(templateRoot, "archives.liquid"));
+    }
+    
+    public static class UrlEncodeFilter
+    {
+        public static string UrlEncode(string input)
         {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "index.liquid"));
-            }
-        }
-
-        public static string EntryTemplatePath { get { return Path.Combine(templateRoot, "entry.liquid");  } }
-        public static string EntryTemplate
-        {
-            get
-            {
-                return File.ReadAllText(EntryTemplatePath);
-            }
-        }
-
-        public static string RSSTemplate
-        {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "rss.liquid"));
-            }
-        }
-        public static string ArchivesTemplate
-        {
-            get
-            {
-                return File.ReadAllText(Path.Combine(templateRoot, "archives.liquid"));
-            }
+            return HttpUtility.UrlEncode(input);
         }
     }
 }

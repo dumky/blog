@@ -4,8 +4,8 @@ PAC is a mechanism by which the operating system uses a simple script file to ch
  
 So I dug up an existing ad-blocking PAC file which seems somehow up-to-date (from [John LoVerso](http://www.schooner.com/~loverso/no-ads/)), configured the blackhole proxy to Google's DNS server (8.8.8.8 port 53), and updated my iOS wi-fi settings to point to it. I tested in Chrome on iPhone and iPad and this method seems to work. 
 
-You can do the same by following the instructions below, but please read the security considerations below first.  
-One caveat is PAC only works for wi-fi in iOS, not on cellular or other connections. 
+You can try this solution by following the instructions below, but please read the security considerations below first.  
+Also, you should note that PAC only works for wi-fi in iOS, not on cellular or other connections. 
 
 # How to install
 
@@ -17,7 +17,8 @@ On iOS, go to Settings > Wi-Fi and open the configuration for the wi-fi you're c
 # Security considerations
 
 Configuring a PAC file into your operating system can be dangerous. If the PAC file is adversarial or was modified by a hacker, the attacker could send parts or all of your web traffic through a proxy of his choice.  
-You could use your own copy of this file, but you'd have to host your copy securely.  
+
+What is typically recommended is for you to use your own copy of this file (you still have to host your copy securely).  
 
 The way I'm looking to solve this is to host the PAC file on a trusted CDN of unmutable files. But I have not yet found an appropriate CDN.    
 This will allow you to review the contents of the PAC file you choose (it's easy to check the code to see it only points to Google's DNS servers as blackhole proxies) and have peace of mind that it cannot be surepticiously updated.  

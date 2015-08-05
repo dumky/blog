@@ -5,7 +5,8 @@ PAC is a mechanism by which the operating system uses a simple script file to ch
 So I dug up an existing ad-blocking PAC file which seems somehow up-to-date (from [John LoVerso](http://www.schooner.com/~loverso/no-ads/)), configured the blackhole proxy to Google's DNS server (8.8.8.8 port 53), and updated my iOS wi-fi settings to point to it. I tested in Chrome on iPhone and iPad and this method seems to work. 
 
 You can try this solution by following the instructions below, but please read the security considerations below first.  
-Also, you should note that PAC only works for wi-fi in iOS, not on cellular or other connections. 
+You should note that PAC only works for wi-fi in iOS, not on cellular or other connections.  
+Also, you should know that iOS 9 may have official support for ad blocking extensions. The details are not yet known.  
 
 # How to install
 

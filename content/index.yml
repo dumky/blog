@@ -12,6 +12,10 @@ ftp-user: blog@monstuff.com
 ftp-dir: 
 
 entries:
+  - title: Ad blocking on iOS
+    date: 2015-08-05
+    src: 2015/08/ad-blocking-on-ios.md
+    draft: true
   - title: How computers work (part 2)
     date: 2015-08-02
     src: 2015/08/how-computers-work-part-2.md

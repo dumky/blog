@@ -7,4 +7,5 @@ Static view.
 
 Only one assumption of the PC model still stands, open entry to the market. This is the main way to improve benefits to the consumer, as Shapiro expounds in chapter X and Rothbard and Mises have also established before him.
 
-
+I'll quote Shapiro's final remark:
+> There is a case to be made against certain tendencies in corporate behavior, but it has little to do with atomism or sloping demand schedules [which are the core of PC model]; it has more to do with business' tendency to run to government for protection whevener the going gets rough in competition at home and abroad.

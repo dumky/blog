@@ -25,9 +25,13 @@ The way I'm looking to solve this is to host the PAC file on a trusted CDN of un
 This will allow you to review the contents of the PAC file you choose (it's easy to check the code to see it only points to Google's DNS servers as blackhole proxies) and have peace of mind that it cannot be surepticiously updated.  
 On the other hand, this means you'll have to update your OS settings if you want to use a newer version of the file.    
 
-Another approach I'm going to investigate to solve this security problem is trying to host the PAC file on the device itself. This would mean installing an iOS app containing a PAC file and referencing that file from the network settings of the OS. I'll post an update once I try.
+Another approach I'm going to investigate to solve this security problem is trying to host the PAC file on the device itself. This would mean installing an iOS app containing a PAC file and referencing that file from the network settings of the OS. I'll post an update once I try.  
 
-Btw, the idea of using Google DNS servers comes from the [FAQ of Weblock](https://www.weblockapp.com/faq/#question-7), an iOS app which generates PAC files. The FAQ offers a good explanation for this choice:
+Any other ideas are appreciated.  
+
+# Using Google DNS as blackhole
+
+The idea of using Google DNS servers comes from the [FAQ of Weblock](https://www.weblockapp.com/faq/#question-7), an iOS app which generates PAC files. The FAQ offers a good explanation for this choice:
 
 > 1. iOS requires dummy proxy to be a valid IP address accepting connections (so it's not possible to use local IP address of your device, since there is no open port to connect to). 
 > 2. It's really responsive, fast and stable anywhere in the world. 

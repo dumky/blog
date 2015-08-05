@@ -1,20 +1,17 @@
 
 Mobile browsers don't support extensions like their desktop counterparts and most don't have an ad blocker built-in. But it turns out that iOS (and probably Android and Windows Phone) supports good old "proxy auto-configuration" (PAC).  
 PAC is a mechanism by which the operating system uses a simple script file to choose when to use a proxy. The script receives the host and url of each web request and tells the operating system whether to connect directly (as normal) or instead use a proxy. The trick is to use a blackhole proxy (which returns no content) for urls that are recognized as advertisement, based on a list of known domains and url patterns.  
-
+ 
 So I dug up an existing ad-blocking PAC file which seems somehow up-to-date (from [John LoVerso](http://www.schooner.com/~loverso/no-ads/)), configured the blackhole proxy to Google's DNS server (8.8.8.8 port 53), and updated my iOS wi-fi settings to point to it. I tested in Chrome on iPhone and iPad and this method seems to work. 
 
-You can do the same by following the instructions below, but please read the security considerations below first. 
+You can do the same by following the instructions below, but please read the security considerations below first.  
+One caveat is PAC only works for wi-fi in iOS, not on cellular or other connections. 
 
-# Installation steps
+# How to install
 
-On iOS, copy and paste [http://blog.monstuff.com/ad-block-pac.js](http://blog.monstuff.com/ad-block-pac.js) into the box shown below, under  Settings > Wi-Fi > "connected wi-fi":
-
+On iOS, go to Settings > Wi-Fi and open the configuration for the wi-fi you're connected to. At the bottom, switch the HTTP proxy option to "Auto" and copy and paste [http://blog.monstuff.com/ad-block-pac.js](http://blog.monstuff.com/ad-block-pac.js) into the box. 
+ 
 ![PAC configuration in iOS](http://i59.tinypic.com/dlnskh.png)
-
-As far as I know, PAC is only supported on wi-fi, not on cellular or other connections.
-
-
 
 
 # Security considerations

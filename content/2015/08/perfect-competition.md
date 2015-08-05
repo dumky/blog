@@ -1,3 +1,5 @@
+Some notes on Milton Shapiro chapter on neoclassical models of competition (perfect competition, monopoly, oligopoly and competitive monopoly) in "Foundations of the Market Price System".
+
 The assumption of perfect competition are unrealistic not just because they are extreme (large number of firms, homogenous products,  perfect knowledge), but that some are directionally wrong. In the real world, where we have most competition is where we also have product differentiation.  
 Also, in the PC model, there is no rivalry on prices or quality. Incentive for firms to lower prices or innovate have disappeared because of perfect knowledge (they get copied immediately).  
 The PC model also implies homogeneity and fungibility of labor.  

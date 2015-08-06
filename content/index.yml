@@ -12,6 +12,10 @@ ftp-user: blog@monstuff.com
 ftp-dir: 
 
 entries:
+  - title: Perfect competition
+    date: 2015-08-07
+    src: 2015/08/perfect-competition.md
+    draft: true
   - title: Ad blocking on iOS
     date: 2015-08-06
     src: 2015/08/ad-blocking-on-ios.md

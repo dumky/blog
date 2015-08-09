@@ -7,6 +7,9 @@ For me the biggest issue is that to reach it's conclusion (PC production structu
 Artificial definition of market. Everything competes for consumer dollars.  
 Static view.  
 
+Rothbard on the definition of the market.  
+Bono as restricting his supply (enjoying leisure).  
+
 Only one assumption of the PC model still stands, open entry to the market. This is the main way to improve benefits to the consumer, as Shapiro expounds in chapter X and Rothbard and Mises have also established before him.
 
 I'll quote Shapiro's final remark:
